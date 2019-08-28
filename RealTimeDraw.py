@@ -1,4 +1,9 @@
-import pygame
+from pygameWindow import PYGAME_WINDOW
 
+pygameWindow = PYGAME_WINDOW()
+
+#print(pygameWindow)
 while True:
-    print('Draw Something')
+    pygameWindow.Prepare()
+    pass
+    pygameWindow.Reveal()
