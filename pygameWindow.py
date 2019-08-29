@@ -1,13 +1,13 @@
 import pygame
+import constants as constants
 class PYGAME_WINDOW:
     def __init__(self):
         pygame.init()
-        self.screen = pygame.display.set_mode((300,100))
+        self.screen = pygame.display.set_mode((constants.pygameWindowWidth,constants.pygameWindowHeight))
 
-    @classmethod
+
     def Prepare(self):
-        pass
+        self.screen.fill([255, 255, 255])
 
-    @classmethod
     def Reveal(self):
-        pass
+        pygame.display.update()
