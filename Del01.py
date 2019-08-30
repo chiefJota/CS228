@@ -35,7 +35,9 @@ def Handle_Frame(frame):
     fingers = hand.fingers
     indexFingerList = fingers.finger_type(1)
     indexFinger = indexFingerList[0]
-    print(indexFinger)
+    distalPhalanx = indexFinger.bone(3)
+    tip = distalPhalanx.next_joint
+    print(tip)
     #print(hand)
 
 while True:
