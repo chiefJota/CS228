@@ -32,7 +32,11 @@ controller = Leap.Controller()
 
 def Handle_Frame(frame):
     hand = frame.hands[0]
-    print(hand)
+    fingers = hand.fingers
+    indexFingerList = fingers.finger_type(1)
+    indexFinger = indexFingerList[0]
+    print(indexFinger)
+    #print(hand)
 
 while True:
 #    pygameWindow.Prepare()
