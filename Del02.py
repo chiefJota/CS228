@@ -24,14 +24,25 @@ yMin = 1000.0
 yMax = -1000.0
 
 ##########################################
+def Handle_Vector_From_Leap(v):
+    x = int(v[0])
+    y = int(v[1])
+    return x, y
+    
+
+##########################################
 def Handle_Bone(bone):
     base = bone.prev_joint
     tip = bone.next_joint
-    xBase = int(base[0])
-    yBase = int(base[1])
-    xTip = int(tip[0])
-    yTip = int(tip[1])
-    print(xBase, yBase, xTip, yTip)
+    #xBase = int(base[0])
+    #yBase = int(base[1])
+    # xTip = int(tip[0])
+    # yTip = int(tip[1])
+    Handle_Vector_From_Leap(base)
+    Handle_Vector_From_Leap(tip)
+    pygameWindow.Draw_Black_Line(base[0], base[1], tip[0], tip[1])
+
+   
 
 ##########################################
 def Handle_Finger(finger):
@@ -53,10 +64,6 @@ def Handle_Frame(frame):
         Handle_Finger(finger)        
     #exit()
         
-
-     #for each finger
-     #iterate over the four bones in the finger
-
     # indexFingerList = fingers.finger_type(1)
     # indexFinger = indexFingerList[0]
     # distalPhalanx = indexFinger.bone(3)
@@ -134,24 +141,3 @@ while True:
 
     #Perturb_Circle_Position()
     pygameWindow.Reveal()
-
-
-##########################################
-#def Perturb_Circle_Position():
-    #global x, y
-#    fourSidedDieRoll = random.randint(1,4)
-
-    #decrease horizontal position by 1
-#    if(fourSidedDieRoll == 1):
-#        x = x-constants.circleVelocity
-    #increase horizontal position by 1
-#    elif(fourSidedDieRoll == 2):
-#        x = x+constants.circleVelocity
-    #decrease vertical position by 1
-#    elif(fourSidedDieRoll == 3):
-#        y = y-constants.circleVelocity
-    #increase vertical position by 1
-#    else:
-#        y = y+constants.circleVelocity
-
-#print(pygameWindow)
