@@ -24,8 +24,24 @@ yMin = 1000.0
 yMax = -1000.0
 
 ##########################################
+def Handle_Bone(bone):
+    base = bone.prev_joint
+    tip = bone.next_joint
+    xBase = int(base[0])
+    yBase = int(base[1])
+    xTip = int(tip[0])
+    yTip = int(tip[1])
+    print(xBase, yBase, xTip, yTip)
+
+##########################################
+def Handle_Finger(finger):
+     for b in range(0, 4):
+         bone = finger.bone(b)
+         Handle_Bone(bone)
+
+##########################################
 def Handle_Frame(frame):
-    
+
     global x, y
     global xMin, xMax, yMin, yMax
     hand = frame.hands[0]
@@ -34,10 +50,8 @@ def Handle_Frame(frame):
     for finger in fingers:
         #print right after assignment 
         #print(finger)
-        for b in range(0, 4):
-            bone = finger.bone(b)
-            print(bone)
-    exit()
+        Handle_Finger(finger)        
+    #exit()
         
 
      #for each finger
