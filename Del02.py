@@ -13,21 +13,38 @@ pygameWindow = PYGAME_WINDOW()
 x = 0
 y = 0
 
-#"global" scaled coordinates
-pygameX = 0
-pygameY = 0
-
 #"global" min and max dimensions of windowsize
-xMin = 1000.0
-xMax = -1000.0
-yMin = 1000.0
-yMax = -1000.0
+xMin = -100.0
+xMax = 100.0
+yMin = -100.0
+yMax = 100.0
 
 ##########################################
 def Handle_Vector_From_Leap(v):
+    global x, y
+    global xMin, xMax, yMin, yMax
+
     x = int(v[0])
-    y = int(v[1])
-    return x, y
+    #change to this when you get the scaling correct
+    #and to have it facing the correct direction
+    #y = int(v[1])
+    y = int(v[2])
+
+    scaleX = Scale(x, xMin, xMax, 0, constants.pygameWindowWidth)
+    scaleY = Scale(y, yMin, yMax, 0, constants.pygameWindowDepth)
+
+    if(x < xMin):
+        xMin = x
+    if(x > xMax):
+        xMax = x
+
+    if(y < yMin):
+        yMin = y
+    if(y > yMax):
+        yMax = y
+
+    #Scale the two values like you did previously
+    return scaleX, scaleY
     
 
 ##########################################
@@ -38,12 +55,12 @@ def Handle_Bone(bone):
     #yBase = int(base[1])
     # xTip = int(tip[0])
     # yTip = int(tip[1])
-    Handle_Vector_From_Leap(base)
-    Handle_Vector_From_Leap(tip)
-    pygameWindow.Draw_Black_Line(base[0], base[1], tip[0], tip[1])
+    baseInfo = Handle_Vector_From_Leap(base)
+    tipInfo = Handle_Vector_From_Leap(tip)
 
+    #change to this eventually so that hand is drawn correctly
+    pygameWindow.Draw_Black_Line(baseInfo[0], baseInfo[1], tipInfo[0], tipInfo[1])
    
-
 ##########################################
 def Handle_Finger(finger):
      for b in range(0, 4):
@@ -72,15 +89,7 @@ def Handle_Frame(frame):
     # y = int(tip[1])
     # #print(tip)
 
-    # if(x < xMin):
-    #     xMin = x
-    # if(x > xMax):
-    #     xMax = x
-
-    # if(y < yMin):
-    #     yMin = y
-    # if(y > yMax):
-    #     yMax = y
+    
     # print(xMin)
     # print(xMax)
     # print(yMin)
