@@ -14,10 +14,12 @@ x = 0
 y = 0
 
 #"global" min and max dimensions of windowsize
-xMin = -100.0
-xMax = 100.0
-yMin = -100.0
-yMax = 100.0
+xMin = -175.0
+xMax = 175.0
+yMin = -175.0
+yMax = 1.0
+
+width = 5
 
 ##########################################
 def Handle_Vector_From_Leap(v):
@@ -49,6 +51,7 @@ def Handle_Vector_From_Leap(v):
 
 ##########################################
 def Handle_Bone(bone):
+    global width
     base = bone.prev_joint
     tip = bone.next_joint
     #xBase = int(base[0])
@@ -59,13 +62,24 @@ def Handle_Bone(bone):
     tipInfo = Handle_Vector_From_Leap(tip)
 
     #change to this eventually so that hand is drawn correctly
-    pygameWindow.Draw_Black_Line(baseInfo[0], baseInfo[1], tipInfo[0], tipInfo[1])
+    pygameWindow.Draw_Black_Line(baseInfo[0], baseInfo[1], tipInfo[0], tipInfo[1], width)
    
 ##########################################
 def Handle_Finger(finger):
-     for b in range(0, 4):
-         bone = finger.bone(b)
-         Handle_Bone(bone)
+    global width
+    for b in range(0, 4):
+        bone = finger.bone(b)
+        if(b == 0):
+            width = 5
+        elif(b == 1):
+            width = 4
+        elif(b == 2):
+            width = 3
+        elif(b == 3):
+            width  = 2
+        elif(b == 4):
+            width  = 1 
+        Handle_Bone(bone)
 
 ##########################################
 def Handle_Frame(frame):
