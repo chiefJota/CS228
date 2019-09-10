@@ -8,7 +8,7 @@ import constants as constants
 class DELIVERABLE:
     def __init__(self):
 
-        self.pygameWindow = PYGAME_WINDOW()
+        self.pygameWindow_Del03 = PYGAME_WINDOW()
 
         self.controller = Leap.Controller()
 
@@ -24,7 +24,9 @@ class DELIVERABLE:
 
         self.width = 5
 
-       # self.numberOfHands
+        self.color = (0, 0, 0) 
+
+        self.numberOfHands = 0
 
 ##########################################
     def Handle_Vector_From_Leap(self, v):
@@ -66,8 +68,15 @@ class DELIVERABLE:
         baseInfo = self.Handle_Vector_From_Leap(base)
         tipInfo = self.Handle_Vector_From_Leap(tip)
 
-        #change to this eventually so that hand is drawn correctly
-        self.pygameWindow.Draw_Black_Line(baseInfo[0], baseInfo[1], tipInfo[0], tipInfo[1], self.width)
+        #gets the number of hands
+        numHands = len(self.numberOfHands)
+
+        if(numHands == 1):
+            self.color = (0, 255, 0)
+        elif(numHands == 2):
+            self.color = (255, 0, 0)
+
+        self.pygameWindow_Del03.Draw_Line(self.color, baseInfo[0], baseInfo[1], tipInfo[0], tipInfo[1], self.width)
     
 ##########################################
     def Handle_Finger(self, finger):
@@ -88,33 +97,16 @@ class DELIVERABLE:
 
 ##########################################
     def Handle_Frame(self, frame):
-        #global x, y
-        #global xMin, xMax, yMin, yMax
+
         hand = frame.hands[0]
+        #print(hand)
         fingers = hand.fingers
         #print(str(len(fingers)))
         for finger in fingers:
             #print right after assignment 
             #print(finger)
             self.Handle_Finger(finger)        
-        #exit()
-            
-        # indexFingerList = fingers.finger_type(1)
-        # indexFinger = indexFingerList[0]
-        # distalPhalanx = indexFinger.bone(3)
-        # tip = distalPhalanx.next_joint
-        # x = int(tip[0])
-        # y = int(tip[1])
-        # #print(tip)
-
-        
-        # print(xMin)
-        # print(xMax)
-        # print(yMin)
-        # print(yMax)
-
-        #print(hand)
-
+    
 ##########################################
     #arg 1 should lie within a range defined by args 2 and 3.
     #and should be scaled so that it lies within the new range
@@ -141,17 +133,17 @@ class DELIVERABLE:
 
 ##########################################
     def Run_Once(self):
-        self.pygameWindow.Prepare()
+        self.pygameWindow_Del03.Prepare()
 
         # #sandwich this between prepare and reveal
         frame = self.controller.frame()
             
-        # ##want to change the position of the dot only when you hover
-        #your hand over the device
-        handlist = frame.hands
+        #stores the number of hands in the frame
+        self.numberOfHands = frame.hands
 
-        #if the list is not empty
-        if(handlist > 0):
+        #if the num of hands is not 0
+        if(self.numberOfHands > 0):
+            #print(len(self.numberOfHands))
             self.Handle_Frame(frame)
 
-        self.pygameWindow.Reveal()
+        self.pygameWindow_Del03.Reveal()

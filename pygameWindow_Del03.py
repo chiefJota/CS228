@@ -5,8 +5,6 @@ class PYGAME_WINDOW:
         pygame.init()
         self.screen = pygame.display.set_mode((constants.pygameWindowWidth,constants.pygameWindowDepth))
 
-
-
     def Prepare(self):
         pygame.event.get()
         self.screen.fill((255, 255, 255))
@@ -18,5 +16,5 @@ class PYGAME_WINDOW:
     def Draw_Black_Circle(self, x, y):
         pygame.draw.circle(self.screen, (0, 0, 0), [x, y], 15)
 
-    def Draw_Black_Line(self, xBase, yBase, xTip, yTip, width):
-        pygame.draw.line(self.screen, (0, 0, 0), (xBase, yBase), (xTip, yTip), width)
+    def Draw_Line(self, color, xBase, yBase, xTip, yTip, width):
+        pygame.draw.line(self.screen, color, (xBase, yBase), (xTip, yTip), width)
