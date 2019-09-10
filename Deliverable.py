@@ -26,12 +26,10 @@ class DELIVERABLE:
 
         self.color = (0, 0, 0) 
 
-        self.numberOfHands = 0
-
+        self.previousNumberOfHands = 0
+        self.currentNumberOfhands = 0
 ##########################################
     def Handle_Vector_From_Leap(self, v):
-        #global x, y
-        #global xMin, xMax, yMin, yMax
 
         self.x = int(v[0])
         #change to this when you get the scaling correct
@@ -69,7 +67,7 @@ class DELIVERABLE:
         tipInfo = self.Handle_Vector_From_Leap(tip)
 
         #gets the number of hands
-        numHands = len(self.numberOfHands)
+        numHands = len(self.currentNumberOfhands)
 
         if(numHands == 1):
             self.color = (0, 255, 0)
@@ -105,7 +103,10 @@ class DELIVERABLE:
         for finger in fingers:
             #print right after assignment 
             #print(finger)
-            self.Handle_Finger(finger)        
+            self.Handle_Finger(finger)   
+
+        if(self.Recording_Is_Ending()):
+            print("recording is ending.")     
     
 ##########################################
     #arg 1 should lie within a range defined by args 2 and 3.
@@ -134,16 +135,30 @@ class DELIVERABLE:
 ##########################################
     def Run_Once(self):
         self.pygameWindow_Del03.Prepare()
-
-        # #sandwich this between prepare and reveal
+        #capture a frame
         frame = self.controller.frame()
-            
-        #stores the number of hands in the frame
-        self.numberOfHands = frame.hands
+        #stores the current number of hands in the frame
+        self.currentNumberOfhands = frame.hands
 
-        #if the num of hands is not 0
-        if(self.numberOfHands > 0):
+        #if the curr num of hands is not 0
+        if(self.currentNumberOfhands > 0):
             #print(len(self.numberOfHands))
             self.Handle_Frame(frame)
+        
+        #as its about to exit and iteration store curNumHands in prevNumHands
+        self.previousNumberOfHands = len(self.currentNumberOfhands)
 
         self.pygameWindow_Del03.Reveal()
+
+       
+
+    def Recording_Is_Ending(self):
+        #should return true when there is one hand over the device
+        #but there was two hands over it in the previous iteration
+        numHands = len(self.currentNumberOfhands)
+        #prevNumHands = len(self.previousNumberOfHands)
+
+        if(numHands == 1 and self.previousNumberOfHands == 2):
+            return True
+        else:
+            return False
