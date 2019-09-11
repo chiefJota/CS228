@@ -5,6 +5,7 @@ from pygameWindow_Del03 import PYGAME_WINDOW
 import constants as constants
 import numpy as np
 import pickle
+import os
 
 
 class DELIVERABLE:
@@ -14,7 +15,6 @@ class DELIVERABLE:
 
         self.controller = Leap.Controller()
 
-     
         self.x = 0
         self.y = 0
 
@@ -32,6 +32,8 @@ class DELIVERABLE:
 
         #3D matrix of five rows, 4 columns and 6 stacks
         self.gestureData = np.zeros((5, 4, 6), dtype='f')
+
+        self.gestureFile = 0
 ##########################################
     def Handle_Vector_From_Leap(self, v):
 
@@ -130,9 +132,10 @@ class DELIVERABLE:
             self.Handle_Finger(finger)   
 
         if(self.Recording_Is_Ending()):
-            print(self.gestureData)   
+            print(self.gestureData)  
             self.Save_Gesture()
-    
+            #increments every time gesture is saved to a file
+            self.gestureFile+=1
 ##########################################
     #arg 1 should lie within a range defined by args 2 and 3.
     #and should be scaled so that it lies within the new range
@@ -190,7 +193,8 @@ class DELIVERABLE:
 ##########################################   
     def Save_Gesture(self):
         #first open the file we want
-        with open('/Users/Chief/Desktop/LeapDeveloperKit_2.3.1+31549_mac/LeapSDK/lib/CS228/userData/gesture.p', 'wb', 0) as f:
+        fileNum = str(self.gestureFile)
+        with open('/Users/Chief/Desktop/LeapDeveloperKit_2.3.1+31549_mac/LeapSDK/lib/CS228/userData/gesture'+fileNum+'.p', 'wb', 0) as f:
         #pickleOut = open("gesture.p", "wb")
         #then dump the data into the file
             pickle.dump(self.gestureData, f)
