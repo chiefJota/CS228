@@ -6,6 +6,7 @@ import constants as constants
 import numpy as np
 import pickle
 import os
+import shutil
 
 
 class DELIVERABLE:
@@ -34,6 +35,8 @@ class DELIVERABLE:
         self.gestureData = np.zeros((5, 4, 6), dtype='f')
 
         self.gestureFile = 0
+
+        self.cleanData()
 ##########################################
     def Handle_Vector_From_Leap(self, v):
 
@@ -56,8 +59,6 @@ class DELIVERABLE:
 
         #Scale the two values like you did previously
         return scaleX, scaleY
-    
-
 ##########################################
     def Handle_Bone(self, bone, i, j):
         #global width
@@ -152,14 +153,10 @@ class DELIVERABLE:
             appRange = appEnd - appStart
             curPosition = (((fingerPosition - leapStart) * appRange)/deviceRange) + appStart
         return int(curPosition)
-
-
 ##########################################
     def Run_Forever(self):
         while True:
             self.Run_Once()
-            
-
 ##########################################
     def Run_Once(self):
         self.pygameWindow_Del03.Prepare()
@@ -177,7 +174,6 @@ class DELIVERABLE:
         self.previousNumberOfHands = len(self.currentNumberOfhands)
 
         self.pygameWindow_Del03.Reveal()
-
 ##########################################   
 
     def Recording_Is_Ending(self):
@@ -199,3 +195,18 @@ class DELIVERABLE:
         #then dump the data into the file
             pickle.dump(self.gestureData, f)
             f.close()
+##########################################  
+    def cleanData(self):
+        #hold the file path for the directory we are going to delete
+        dirName = '/Users/Chief/Desktop/LeapDeveloperKit_2.3.1+31549_mac/LeapSDK/lib/CS228/userData'
+
+        for file in os.listdir(dirName):
+            filePath = os.path.join(dirName, file)
+            if(os.path.isfile(filePath)):
+                os.remove(filePath)
+        os.rmdir(dirName)    
+
+        newDir = '/Users/Chief/Desktop/LeapDeveloperKit_2.3.1+31549_mac/LeapSDK/lib/CS228/userData/'
+        os.makedirs(newDir)
+       
+      
