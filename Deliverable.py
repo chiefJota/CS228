@@ -4,6 +4,7 @@ import Leap
 from pygameWindow_Del03 import PYGAME_WINDOW
 import constants as constants
 import numpy as np
+import pickle
 
 
 class DELIVERABLE:
@@ -130,6 +131,7 @@ class DELIVERABLE:
 
         if(self.Recording_Is_Ending()):
             print(self.gestureData)   
+            self.Save_Gesture()
     
 ##########################################
     #arg 1 should lie within a range defined by args 2 and 3.
@@ -185,3 +187,11 @@ class DELIVERABLE:
             return True
         else:
             return False
+##########################################   
+    def Save_Gesture(self):
+        #first open the file we want
+        with open('/Users/Chief/Desktop/LeapDeveloperKit_2.3.1+31549_mac/LeapSDK/lib/CS228/userData/gesture.p', 'wb', 0) as f:
+        #pickleOut = open("gesture.p", "wb")
+        #then dump the data into the file
+            pickle.dump(self.gestureData, f)
+            f.close()
