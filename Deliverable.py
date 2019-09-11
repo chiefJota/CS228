@@ -3,6 +3,7 @@ sys.path.insert(0, '..')
 import Leap
 from pygameWindow_Del03 import PYGAME_WINDOW
 import constants as constants
+import numpy as np
 
 
 class DELIVERABLE:
@@ -12,11 +13,10 @@ class DELIVERABLE:
 
         self.controller = Leap.Controller()
 
-        #"global" x and y
+     
         self.x = 0
         self.y = 0
 
-        #"global" min and max dimensions of windowsize
         self.xMin = -175.0
         self.xMax = 175.0
         self.yMin = -175.0
@@ -28,13 +28,14 @@ class DELIVERABLE:
 
         self.previousNumberOfHands = 0
         self.currentNumberOfhands = 0
+
+        #3D matrix of five rows, 4 columns and 6 stacks
+        self.gestureData = np.zeros((5, 4, 6), dtype='f')
 ##########################################
     def Handle_Vector_From_Leap(self, v):
 
         self.x = int(v[0])
-        #change to this when you get the scaling correct
-        #and to have it facing the correct direction
-        #y = int(v[1])
+        
         self.y = int(v[2])
 
         scaleX = self.Scale(self.x, self.xMin, self.xMax, 0, constants.pygameWindowWidth)
@@ -55,14 +56,19 @@ class DELIVERABLE:
     
 
 ##########################################
-    def Handle_Bone(self, bone):
+    def Handle_Bone(self, bone, i, j):
         #global width
         base = bone.prev_joint
         tip = bone.next_joint
-        #xBase = int(base[0])
-        #yBase = int(base[1])
-        # xTip = int(tip[0])
-        # yTip = int(tip[1])
+
+        #store the raw values
+        xBase = int(base[0])
+        yBase = int(base[1])
+        zBase = int(base[2])
+        xTip = int(tip[0])
+        yTip = int(tip[1])
+        zTip = int(tip[2])
+
         baseInfo = self.Handle_Vector_From_Leap(base)
         tipInfo = self.Handle_Vector_From_Leap(tip)
 
@@ -75,12 +81,32 @@ class DELIVERABLE:
             self.color = (255, 0, 0)
 
         self.pygameWindow_Del03.Draw_Line(self.color, baseInfo[0], baseInfo[1], tipInfo[0], tipInfo[1], self.width)
-    
+
+        #if the second hand leaves the devices field of view
+        #store the data in the matrix
+        if(self.Recording_Is_Ending()):
+
+            self.gestureData[i,j,0] = xBase
+            self.gestureData[i,j,1] = yBase
+            self.gestureData[i,j,2] = zBase
+
+            self.gestureData[i,j,3] = xTip
+            self.gestureData[i,j,4] = yTip
+            self.gestureData[i,j,5] = zTip
+        
 ##########################################
     def Handle_Finger(self, finger):
+        #global boneJ
+       # global fingerI
+        #i = range(0, 4)
+
         # global width
         for b in range(0, 4):
+    
             bone = finger.bone(b)
+            i = int(finger.type)
+            j = b 
+
             if(b == 0):
                 self.width = 5
             elif(b == 1):
@@ -91,7 +117,7 @@ class DELIVERABLE:
                self.width  = 2
             elif(b == 4):
                 self.width  = 1 
-            self.Handle_Bone(bone)
+            self.Handle_Bone(bone, i, j) 
 
 ##########################################
     def Handle_Frame(self, frame):
@@ -106,7 +132,7 @@ class DELIVERABLE:
             self.Handle_Finger(finger)   
 
         if(self.Recording_Is_Ending()):
-            print("recording is ending.")     
+            print(self.gestureData)   
     
 ##########################################
     #arg 1 should lie within a range defined by args 2 and 3.
