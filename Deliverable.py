@@ -96,10 +96,7 @@ class DELIVERABLE:
         
 ##########################################
     def Handle_Finger(self, finger):
-        #global boneJ
-       # global fingerI
-        #i = range(0, 4)
-
+       
         # global width
         for b in range(0, 4):
     
@@ -176,7 +173,7 @@ class DELIVERABLE:
 
         self.pygameWindow_Del03.Reveal()
 
-       
+##########################################   
 
     def Recording_Is_Ending(self):
         #should return true when there is one hand over the device
