@@ -89,7 +89,7 @@ class DELIVERABLE:
         #if the second hand leaves the devices field of view
         #store the data in the matrix
         if(self.Recording_Is_Ending()):
-
+            
             self.gestureData[i,j,0] = xBase
             self.gestureData[i,j,1] = yBase
             self.gestureData[i,j,2] = zBase
@@ -101,23 +101,20 @@ class DELIVERABLE:
 ##########################################
     def Handle_Finger(self, finger):
        
-        # global width
         for b in range(0, 4):
-    
             bone = finger.bone(b)
             i = int(finger.type)
-            j = b 
-
+            j = b
             if(b == 0):
                 self.width = 5
             elif(b == 1):
                 self.width = 4
             elif(b == 2):
-                self.width = 3
+                self.width = 2
             elif(b == 3):
-               self.width  = 2
-            elif(b == 4):
-                self.width  = 1 
+               self.width  = 1
+           
+                
             self.Handle_Bone(bone, i, j) 
 
 ##########################################
@@ -208,5 +205,6 @@ class DELIVERABLE:
 
         newDir = '/Users/Chief/Desktop/LeapDeveloperKit_2.3.1+31549_mac/LeapSDK/lib/CS228/userData/'
         os.makedirs(newDir)
-       
+##########################################  
+     
       

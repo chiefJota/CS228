@@ -127,8 +127,6 @@ def Scale(fingerPosition, leapStart, leapEnd, appStart, appEnd):
         appRange = appEnd - appStart
         curPosition = (((fingerPosition - leapStart) * appRange)/deviceRange) + appStart
     return int(curPosition)
-
-
 ##########################################
 
 controller = Leap.Controller()
