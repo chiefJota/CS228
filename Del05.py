@@ -1,7 +1,7 @@
 ##########################################
 
 #import random
-from Recorder import DELIVERABLE
+from Recorder import RECORDER
 
-delInstance = DELIVERABLE()
-delInstance.Run_Forever()
+RecInstance = RECORDER()
+RecInstance.Run_Forever()

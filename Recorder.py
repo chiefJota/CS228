@@ -9,7 +9,7 @@ import os
 import shutil
 
 
-class DELIVERABLE:
+class RECORDER:
     def __init__(self):
 
         self.pygameWindow_Del03 = PYGAME_WINDOW()
@@ -31,8 +31,11 @@ class DELIVERABLE:
         self.previousNumberOfHands = 0
         self.currentNumberOfhands = 0
 
+        self.numberOfGestures = 100
+        self.gestureIndex = 0
+
         #3D matrix of five rows, 4 columns and 6 stacks
-        self.gestureData = np.zeros((5, 4, 6), dtype='f')
+        self.gestureData = np.zeros((5, 4, 6, self.numberOfGestures), dtype='f')
 
         self.gestureFile = 0
 
@@ -77,27 +80,25 @@ class DELIVERABLE:
         tipInfo = self.Handle_Vector_From_Leap(tip)
 
         #gets the number of hands
-        numHands = len(self.currentNumberOfhands)
+        #numHands = len(self.currentNumberOfhands)
 
-        if(numHands == 1):
+        if(len(self.currentNumberOfhands) == 1):
             self.color = (0, 255, 0)
-        elif(numHands == 2):
+        elif(len(self.currentNumberOfhands) == 2):
             self.color = (255, 0, 0)
 
         self.pygameWindow_Del03.Draw_Line(self.color, baseInfo[0], baseInfo[1], tipInfo[0], tipInfo[1], self.width)
 
-        #if the second hand leaves the devices field of view
-        #store the data in the matrix
-        if(self.Recording_Is_Ending()):
+        #if the current number of hands is two
+        if(len(self.currentNumberOfhands) == 2):
             
-            self.gestureData[i,j,0] = xBase
-            self.gestureData[i,j,1] = yBase
-            self.gestureData[i,j,2] = zBase
+            self.gestureData[i,j,0, self.gestureIndex] = xBase
+            self.gestureData[i,j,1, self.gestureIndex] = yBase
+            self.gestureData[i,j,2, self.gestureIndex] = zBase
 
-            self.gestureData[i,j,3] = xTip
-            self.gestureData[i,j,4] = yTip
-            self.gestureData[i,j,5] = zTip
-        
+            self.gestureData[i,j,3, self.gestureIndex] = xTip
+            self.gestureData[i,j,4, self.gestureIndex] = yTip
+            self.gestureData[i,j,5, self.gestureIndex] = zTip
 ##########################################
     def Handle_Finger(self, finger):
        
@@ -129,11 +130,17 @@ class DELIVERABLE:
             #print(finger)
             self.Handle_Finger(finger)   
 
-        if(self.Recording_Is_Ending()):
-            print(self.gestureData)  
-            self.Save_Gesture()
-            #increments every time gesture is saved to a file
-            self.gestureFile+=1
+        if(len(self.currentNumberOfhands) == 2):
+            #self.Save_Gesture()
+            print("gesture " + str(self.gestureIndex) + " stored.")
+            self.gestureIndex = self.gestureIndex + 1
+          
+            if(self.gestureIndex == self.numberOfGestures):
+                print(self.gestureData[:,:,:,0]) 
+                print(self.gestureData[:,:,:,99])
+                self.Save_Gesture()
+                exit(0)
+            
 ##########################################
     #arg 1 should lie within a range defined by args 2 and 3.
     #and should be scaled so that it lies within the new range
@@ -168,7 +175,7 @@ class DELIVERABLE:
             self.Handle_Frame(frame)
         
         #as its about to exit and iteration store curNumHands in prevNumHands
-        self.previousNumberOfHands = len(self.currentNumberOfhands)
+        #self.previousNumberOfHands = len(self.currentNumberOfhands)
 
         self.pygameWindow_Del03.Reveal()
 ##########################################   
@@ -186,8 +193,8 @@ class DELIVERABLE:
 ##########################################   
     def Save_Gesture(self):
         #first open the file we want
-        fileNum = str(self.gestureFile)
-        with open('/Users/Chief/Desktop/LeapDeveloperKit_2.3.1+31549_mac/LeapSDK/lib/CS228/userData/gesture'+fileNum+'.p', 'wb', 0) as f:
+        #fileNum = str(self.gestureFile)
+        with open('/Users/Chief/Desktop/LeapDeveloperKit_2.3.1+31549_mac/LeapSDK/lib/CS228/userData/gesture.p', 'wb', 0) as f:
         #pickleOut = open("gesture.p", "wb")
         #then dump the data into the file
             pickle.dump(self.gestureData, f)
