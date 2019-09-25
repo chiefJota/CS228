@@ -31,7 +31,7 @@ class RECORDER:
         self.previousNumberOfHands = 0
         self.currentNumberOfhands = 0
 
-        self.numberOfGestures = 100
+        self.numberOfGestures = 1000
         self.gestureIndex = 0
 
         #3D matrix of five rows, 4 columns and 6 stacks
@@ -136,8 +136,6 @@ class RECORDER:
             self.gestureIndex = self.gestureIndex + 1
           
             if(self.gestureIndex == self.numberOfGestures):
-                print(self.gestureData[:,:,:,0]) 
-                print(self.gestureData[:,:,:,99])
                 self.Save_Gesture()
                 exit(0)
             
@@ -178,18 +176,6 @@ class RECORDER:
         #self.previousNumberOfHands = len(self.currentNumberOfhands)
 
         self.pygameWindow_Del03.Reveal()
-##########################################   
-
-    def Recording_Is_Ending(self):
-        #should return true when there is one hand over the device
-        #but there was two hands over it in the previous iteration
-        numHands = len(self.currentNumberOfhands)
-        #prevNumHands = len(self.previousNumberOfHands)
-
-        if(numHands == 1 and self.previousNumberOfHands == 2):
-            return True
-        else:
-            return False
 ##########################################   
     def Save_Gesture(self):
         #first open the file we want
