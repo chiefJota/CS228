@@ -1,21 +1,19 @@
 import numpy as np 
 import pickle 
+from knn import KNN
 
 train1 = open("/Users/Chief/Desktop/LeapDeveloperKit_2.3.1+31549_mac/LeapSDK/lib/CS228/userData/train1.p", "rb", 0)
 trainM = pickle.load(train1)
 # print(trainM)
 # print(trainM.shape)
-
 train2 = open("/Users/Chief/Desktop/LeapDeveloperKit_2.3.1+31549_mac/LeapSDK/lib/CS228/userData/train2.p", "rb", 0)
 trainN = pickle.load(train2)
 # print(trainN)
 # print(trainN.shape)
-
 test1 = open("/Users/Chief/Desktop/LeapDeveloperKit_2.3.1+31549_mac/LeapSDK/lib/CS228/userData/test1.p", "rb", 0)
 testM = pickle.load(test1)
 #print(testM)
 #print(testM.shape)
-
 test2 = open("/Users/Chief/Desktop/LeapDeveloperKit_2.3.1+31549_mac/LeapSDK/lib/CS228/userData/test2.p", "rb", 0)
 testN = pickle.load(test2)
 #print(testN)
@@ -24,7 +22,6 @@ testN = pickle.load(test2)
 def ReshapeData(set1, set2):
     X = np.zeros((2000, 5*4*6), dtype="f")
     y = np.zeros(2000)
-    print(len(y))
     for row in range(0, 1000):
         y[row] = 1
         y[row+1000] = 2
@@ -49,3 +46,23 @@ testX, testy = ReshapeData(testM, testN)
 # print(testX.shape)
 # print(testy)
 # print(testy.shape)
+
+#create an instance of knn
+knn = KNN()
+
+#set k value and fit the data
+knn.Use_K_Of(15)
+knn.Fit(trainX, trainy)
+
+numRight = 0
+for row in range(0, 2000):
+    prediction = knn.Predict(testX[row])
+    actualClass = testy[row]
+    if(prediction == actualClass):
+        numRight+=1
+print(numRight)
+
+vecY = float(len(trainy))
+percentage = float(numRight/vecY) * 100
+print(percentage)
+ 
