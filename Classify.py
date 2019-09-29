@@ -50,7 +50,6 @@ def ReduceData(X):
 
 ##########################################   
 def ReshapeData(set1, set2):
-    #TODO:change the 6 to a 3 since the xyz 
     X = np.zeros((2000, 5*2*3), dtype="f")
     y = np.zeros(2000)
     for row in range(0, 1000):
