@@ -97,6 +97,6 @@ vecY = float(len(trainy))
 percentage = float(numRight/vecY) * 100
 print(percentage)
 ##########################################   
-
+pickle.dump(knn, open("userData/classifier.p", "wb"))
 
  
