@@ -122,16 +122,16 @@ def Handle_Finger(finger):
             testData[0, k+2] = zTip
             k = k + 3
 
-        # if(b == 0):
-        #     width = 5
-        # elif(b == 1):
-        #     width = 4
-        # elif(b == 2):
-        #     width = 3
-        # elif(b == 3):
-        #     width  = 2
-        # elif(b == 4):
-        #     width  = 1 
+        if(b == 0):
+            width = 5
+        elif(b == 1):
+            width = 4
+        elif(b == 2):
+            width = 3
+        elif(b == 3):
+            width  = 2
+        elif(b == 4):
+            width  = 1 
         Handle_Bone(bone)
     #print(testData)
     testData = CenterData(testData)
