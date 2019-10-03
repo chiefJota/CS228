@@ -88,9 +88,9 @@ def Handle_Bone(bone):
 
     #Modifying the code to make sure that it workss
     global xTip,yTip,zTip
-    xTip = int(tip[0])
-    yTip = int(tip[1])
-    zTip = int(tip[2])
+   # xTip = int(tip[0])
+    #yTip = int(tip[1])
+    #zTip = int(tip[2])
 
     baseInfo = Handle_Vector_From_Leap(base)
     tipInfo = Handle_Vector_From_Leap(tip)
@@ -151,24 +151,7 @@ def Handle_Frame(frame):
         #print right after assignment 
         #print(finger)
         Handle_Finger(finger)        
-    #exit()
-        
-    # indexFingerList = fingers.finger_type(1)
-    # indexFinger = indexFingerList[0]
-    # distalPhalanx = indexFinger.bone(3)
-    # tip = distalPhalanx.next_joint
-    # x = int(tip[0])
-    # y = int(tip[1])
-    # #print(tip)
-
-    
-    # print(xMin)
-    # print(xMax)
-    # print(yMin)
-    # print(yMax)
-
-    #print(hand)
-
+   
 ##########################################
 #arg 1 should lie within a range defined by args 2 and 3.
 #and should be scaled so that it lies within the new range
