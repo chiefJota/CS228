@@ -2,19 +2,19 @@ import numpy as np
 import pickle 
 from knn import KNN
 
-train1 = open("/Users/Chief/Desktop/LeapDeveloperKit_2.3.1+31549_mac/LeapSDK/lib/CS228/userData/trainM.p", "rb", 0)
+train1 = open("/Users/Chief/Desktop/LeapDeveloperKit_2.3.1+31549_mac/LeapSDK/lib/CS228/userData/train1R.p", "rb", 0)
 trainM = pickle.load(train1)
 # print(trainM)
 # print(trainM.shape)
-train2 = open("/Users/Chief/Desktop/LeapDeveloperKit_2.3.1+31549_mac/LeapSDK/lib/CS228/userData/trainN.p", "rb", 0)
+train2 = open("/Users/Chief/Desktop/LeapDeveloperKit_2.3.1+31549_mac/LeapSDK/lib/CS228/userData/train2R.p", "rb", 0)
 trainN = pickle.load(train2)
 # print(trainN)
 # print(trainN.shape)
-test1 = open("/Users/Chief/Desktop/LeapDeveloperKit_2.3.1+31549_mac/LeapSDK/lib/CS228/userData/testM.p", "rb", 0)
+test1 = open("/Users/Chief/Desktop/LeapDeveloperKit_2.3.1+31549_mac/LeapSDK/lib/CS228/userData/test1R.p", "rb", 0)
 testM = pickle.load(test1)
 #print(testM)
 #print(testM.shape)
-test2 = open("/Users/Chief/Desktop/LeapDeveloperKit_2.3.1+31549_mac/LeapSDK/lib/CS228/userData/testN.p", "rb", 0)
+test2 = open("/Users/Chief/Desktop/LeapDeveloperKit_2.3.1+31549_mac/LeapSDK/lib/CS228/userData/test2R.p", "rb", 0)
 testN = pickle.load(test2)
 #print(testN)
 #print(testN.shape)
