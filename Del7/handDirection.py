@@ -48,4 +48,3 @@ def draw_leftDownImage():
     # startImage = pygame.image.load("/Users/Chief/Desktop/LeapDeveloperKit_2.3.1+31549_mac/LeapSDK/lib/CS228/Del6/HoverHandOverLEap.png")
     # pygameWindow.screen.blit(startImage, (constants.pygameWindowWidth/2 + constants.pygameWindowWidth/8, 150))
     pass
-########################################## 
