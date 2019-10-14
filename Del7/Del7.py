@@ -185,6 +185,8 @@ def displayASL():
         if aslNum == 9:
             num = '9'
     sucess = True
+    daNumba = pygame.image.load("/Users/chief/Desktop/LeapDeveloperKit_2.3.1+31549_mac/LeapSDK/lib/CS228/Del7/ASLNUMS/"+num+".png")
+    pygameWindow.screen.blit(daNumba, (constants.pygameWindowWidth/2 + constants.pygameWindowWidth/6, 150))
     aslSign = pygame.image.load("/Users/chief/Desktop/LeapDeveloperKit_2.3.1+31549_mac/LeapSDK/lib/CS228/Del7/ASLNUMS/asl"+num+".png")
     pygameWindow.screen.blit(aslSign, (constants.pygameWindowWidth / 2 + constants.pygameWindowWidth / 8, constants.pygameWindowDepth / 2 + constants.pygameWindowDepth / 8))
     correctGesture(aslNum)
