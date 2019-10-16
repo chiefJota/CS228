@@ -4,13 +4,12 @@ import sys
 sys.path.insert(0, '../..')
 import Leap
 from pygameWindow import PYGAME_WINDOW
-#import random
 import constants as constants
 
 import numpy as np
 import handDirection
 import random
-
+import time
 
 ##########################################
 def login():
@@ -39,6 +38,7 @@ def login():
 
 #prints this: {'logins': 1, 'digit3attempted': 1}
 
+##########################################
 login()
 
 pygameWindow = PYGAME_WINDOW()
@@ -66,7 +66,8 @@ gloablNumFrames = 0
 rightSign = 0
 framesCorrect = 0
 sucess = False
-digitPresented = 0
+digitPresented = " "
+
 ########################################## 
     
 def handLocation(base):
@@ -189,52 +190,45 @@ def displayASL():
     global sucess
     global digitPresented
     global userRecord
-
-   
-    #pygameWindow.screen.blit(textsurface,(constants.pygameWindowWidth / 2 + constants.pygameWindowWidth / 6, constants.pygameWindowDepth - constants.pygameWindowDepth/3))
-
+    global aslDigit
      
     pygame.font.init()
     font = pygame.font.SysFont("Comic Sans MS", 32)
     
     if sucess == False:
         #choose random aslNum to gesture
-        aslNum = random.randrange(0, 10, 1)
+        aslNum = random.randint(0, 9)
     
         if aslNum == 0:
             if('digit0presented' in userRecord):
                 userRecord['digit0presented'] = userRecord['digit0presented'] + 1
             else:
                 userRecord['digit0presented'] = 1
-            aslDigit = font.render(str(userRecord['digit0presented']), True, (0, 0, 0))
-            
-           # pygameWindow.screen.blit(userRecord['digit0presented'],(175,750))
+            aslDigit = font.render("Times Presented: " + str(userRecord['digit0presented']), True, (0, 0, 0))
             num = '0'
+
         if aslNum == 1:
             if('digit1presented' in userRecord):
                 userRecord['digit1presented'] = userRecord['digit1presented'] + 1
             else:
                 userRecord['digit1presented'] = 1
-            aslDigit = font.render(str(userRecord['digit1presented']), True, (0, 0, 0))
-        #    pygameWindow.screen.blit(aslDigit,(175,750))
+            aslDigit = font.render("Times Presented: " + str(userRecord['digit1presented']), True, (0, 0, 0))
             num = '1'
+
         if aslNum== 2:
             if('digit2presented' in userRecord):
                 userRecord['digit2presented'] = userRecord['digit2presented'] + 1
             else:
                 userRecord['digit2presented'] = 1
-            aslDigit = font.render(str(userRecord['digit2presented']), True, (0, 0, 0))
-          #  pygameWindow.screen.blit(aslDigit,(175,750))
-         
+            aslDigit = font.render("Times Presented: " + str(userRecord['digit2presented']), True, (0, 0, 0))
             num = '2'
+
         if aslNum == 3:
             if('digit3presented' in userRecord):
                 userRecord['digit3presented'] = userRecord['digit3presented'] + 1
             else:
                 userRecord['digit3presented'] = 1
-            aslDigit = font.render(str(userRecord['digit3presented']), True, (0, 0, 0))
-          #  pygameWindow.screen.blit(aslDigit,(175,750))
-           # pygameWindow.screen.blit(userRecord['digit3presented'] ,(175,750))
+            aslDigit = font.render("Times Presented: " + str(userRecord['digit3presented']), True, (0, 0, 0))
             num = '3'
         if aslNum == 4:
             if('digit4presented' in userRecord):
@@ -242,62 +236,57 @@ def displayASL():
                 
             else:
                 userRecord['digit4presented'] = 1
-            aslDigit = font.render(str(userRecord['digit4presented']), True, (0, 0, 0))
-         #   pygameWindow.screen.blit(aslDigit,(175,750))
-          #  pygameWindow.screen.blit(userRecord['digit4presented'],(175,750))
+            aslDigit = font.render("Times Presented: " + str(userRecord['digit4presented']), True, (0, 0, 0))
             num = '4'
+
         if aslNum == 5:
             if('digit5presented' in userRecord):
                 userRecord['digit5presented'] = userRecord['digit5presented'] + 1
             else:
                 userRecord['digit5presented'] = 1
-            aslDigit = font.render(str(userRecord['digit5presented']), True, (0, 0, 0))
-          #  pygameWindow.screen.blit(aslDigit,(175,750))
-          #  pygameWindow.screen.blit(userRecord['digit5presented'] ,(175,750))
+            aslDigit = font.render("Times Presented: " + str(userRecord['digit5presented']), True, (0, 0, 0))
             num = '5'
+
         if aslNum== 6:
             if('digit6presented' in userRecord):
                 userRecord['digit6presented'] = userRecord['digit6presented'] + 1
             else:
                 userRecord['digit6presented'] = 1
-            aslDigit = font.render(str(userRecord['digit6presented']), True, (0, 0, 0))
-        #    pygameWindow.screen.blit(aslDigit,(175,750))
-         #   pygameWindow.screen.blit(userRecord['digit6presented'] ,(175,750))
+            aslDigit = font.render("Times Presented: " + str(userRecord['digit6presented']), True, (0, 0, 0))
             num = '6'
+
         if aslNum== 7:
             if('digit7presented' in userRecord):
                 userRecord['digit7presented'] = userRecord['digit7presented'] + 1
             else:
                 userRecord['digit7presented'] = 1
-            aslDigit = font.render(str(userRecord['digit7presented']), True, (0, 0, 0))
-          #  pygameWindow.screen.blit(aslDigit,(175,750))
-         #   pygameWindow.screen.blit(userRecord['digit7presented'],(175,750))
+            aslDigit = font.render("Times Presented: " + str(userRecord['digit7presented']), True, (0, 0, 0))
             num = '7'
+
         if aslNum == 8:
             if('digit8presented' in userRecord):
                 userRecord['digit8presented'] = userRecord['digit8presented'] + 1
             else:
                 userRecord['digit8presented'] = 1
-            aslDigit = font.render(str(userRecord['digit8presented']), True, (0, 0, 0))
-         #   pygameWindow.screen.blit(aslDigit,(175,750))
-          #  pygameWindow.screen.blit(userRecord['digit8presented'],(175,750))
+            aslDigit = font.render("Times Presented: " + str(userRecord['digit8presented']), True, (0, 0, 0))
             num = '8'
+
         if aslNum == 9:
             if('digit9presented' in userRecord):
                 userRecord['digit9presented'] = userRecord['digit9presented'] + 1
             else:
                 userRecord['digit9presented'] = 1
-            aslDigit = font.render(str(userRecord['digit9presented']), True, (0, 0, 0))
-          #  pygameWindow.screen.blit(aslDigit,(175,750))
-          #  pygameWindow.screen.blit(userRecord['digit9presented'],(175,750))
+                aslDigit = font.render("Times Presented: " + str(userRecord['digit9presented']), True, (0, 0, 0))
             num = '9'
-
-        pygameWindow.screen.blit(aslDigit,(175,750))    
+             
     sucess = True
+    #should be able to display this to the screen for longer than flash 
+    pygameWindow.screen.blit(aslDigit,(175,750)) 
+    #are displayed longer than flash   
     daNumba = pygame.image.load("/Users/chief/Desktop/LeapDeveloperKit_2.3.1+31549_mac/LeapSDK/lib/CS228/Del7/ASLNUMS/"+num+".png")
     pygameWindow.screen.blit(daNumba, (750, 175))
     aslSign = pygame.image.load("/Users/chief/Desktop/LeapDeveloperKit_2.3.1+31549_mac/LeapSDK/lib/CS228/Del7/ASLNUMS/asl"+num+".png")
-    pygameWindow.screen.blit(aslSign, (750, 750))
+    pygameWindow.screen.blit(aslSign, (675, 625))
     correctGesture(aslNum)
 #############################################   
 def correctGesture(aslNum):
