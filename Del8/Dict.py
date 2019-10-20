@@ -67,6 +67,7 @@ rightSign = 0
 framesCorrect = 0
 sucess = False
 digitPresented = " "
+framesGoneBy = 0
 
 ########################################## 
     
@@ -167,6 +168,7 @@ def HandleState3(frame, handlist):
         sucessCount+=1
     sucess = False
     sucessCount = 0
+
 
     if(not HandOverDevice(frame, handlist)):
         programState = 0
@@ -280,9 +282,7 @@ def displayASL():
             num = '9'
              
     sucess = True
-    #should be able to display this to the screen for longer than flash 
-    pygameWindow.screen.blit(aslDigit,(175,750)) 
-    #are displayed longer than flash   
+    pygameWindow.screen.blit(aslDigit,(175,750))  
     daNumba = pygame.image.load("/Users/chief/Desktop/LeapDeveloperKit_2.3.1+31549_mac/LeapSDK/lib/CS228/Del7/ASLNUMS/"+num+".png")
     pygameWindow.screen.blit(daNumba, (750, 175))
     aslSign = pygame.image.load("/Users/chief/Desktop/LeapDeveloperKit_2.3.1+31549_mac/LeapSDK/lib/CS228/Del7/ASLNUMS/asl"+num+".png")
@@ -294,23 +294,34 @@ def correctGesture(aslNum):
     global framesCorrect
     global sucess
     global predictedClass
+    global framesGoneBy
     #check to see if the predictedNum is matching
     #the aslNum
     predictedClass = clf.Predict(testData)
    # print(predictedClass)
     if(predictedClass == aslNum):
         framesCorrect+=1
-        print(framesCorrect)
+       # print(framesCorrect)
     if(predictedClass != aslNum):
+        framesGoneBy+=1
+        print(framesGoneBy)
         framesCorrect = 0
         programState = 2
-    if(framesCorrect == 3):
+    if(framesGoneBy >= 25):
+        pickle.dump(database, open('userData/database.p','wb'))
+        framesGoneBy = 0
+        print(framesGoneBy)
+        programState = 2
         sucess = False
+    if(framesCorrect >= 10):
         #dump contents of dictionary in pickled file
         pickle.dump(database, open('userData/database.p','wb'))
-       # programState = 3
-        #Draw check mark or something
+        framesGoneBy = 0
+        print(framesGoneBy)
+        programState = 3
         print("success")
+
+    
 #############################################                     
 def draw_panels():
     pygame.draw.line(pygameWindow.screen, (0,0,0),(constants.pygameWindowWidth/2, 0), (constants.pygameWindowWidth/2, constants.pygameWindowDepth), 2)
@@ -471,10 +482,6 @@ while True:
     pygameWindow.Prepare()
     #draw the panels
     draw_panels()
-
-
-    #text_surface = font.render('Hello world', True, (0, 0, 0))
-    #pygameWindow.screen.blit(text_surface, (175,750))
 
     # #sandwich this between prepare and reveal
     frame = controller.frame()
