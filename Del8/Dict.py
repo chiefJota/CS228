@@ -34,6 +34,7 @@ def login():
     #print(database)
     #make dictionary to hold gesture info
     userRecord = database[userName]
+    print(database)
 ##########################################
 
 #prints this: {'logins': 1, 'digit3attempted': 1}
@@ -144,18 +145,23 @@ def HandleState0(frame, handslist):
 #hand is present but not centered
 def HandleState1(frame, handlist):
     global programState
+    global framesGoneBy
     #if no hands are detected
     if(not HandOverDevice(frame, handlist)):
         programState = 0
+        framesGoneBy = 0
+
 ########################################## 
 #Now, if the users hand is centered, pick one of the 10 ASL numbers at random and show it
 # to the user in the upper right panel. Also, show an image of the ASL gesture corresponding
 # to this digit in the lower right panel so the user knows what to do
 def HandleState2(frame, handlist):
     global programState
+    global framesGoneBy
     displayASL()   
     if(not HandOverDevice(frame, handlist)):
         programState = 0
+        framesGoneBy = 0
 
 ########################################## 
 def HandleState3(frame, handlist):
@@ -301,25 +307,27 @@ def correctGesture(aslNum):
    # print(predictedClass)
     if(predictedClass == aslNum):
         framesCorrect+=1
+        framesGoneBy+=1
+        print(framesGoneBy)
        # print(framesCorrect)
     if(predictedClass != aslNum):
         framesGoneBy+=1
-        print(framesGoneBy)
         framesCorrect = 0
+        print(framesGoneBy)
         programState = 2
-    if(framesGoneBy >= 25):
+    if(framesGoneBy >= 35):
         pickle.dump(database, open('userData/database.p','wb'))
         framesGoneBy = 0
-        print(framesGoneBy)
         programState = 2
         sucess = False
+        print(framesGoneBy)
     if(framesCorrect >= 10):
         #dump contents of dictionary in pickled file
         pickle.dump(database, open('userData/database.p','wb'))
         framesGoneBy = 0
-        print(framesGoneBy)
         programState = 3
         print("success")
+        print(framesGoneBy)
 
     
 #############################################                     
