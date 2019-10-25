@@ -215,7 +215,7 @@ def displayASL():
     aslNum = range(0,10)
     #choose asl to gesture
     numToGesture = aslNum[whichDigit]
-    dic = {'1':1,'2':2,'3':3,'4':4,'5':5,'6':6,'7':7,'8':8,'9':9,'10':10,'11':11,'12':12}
+   # dic = {'1':1,'2':2,'3':3,'4':4,'5':5,'6':6,'7':7,'8':8,'9':9,'10':10,'11':11,'12':12}
 
     
     if sucess == False:
@@ -307,9 +307,12 @@ def displayASL():
     
     convert = str(whichDigit)
     key = (convert + " Sucessful signs") 
-    timesCorrect = font.render("Times correct: " + str(userRecord[key]), True, (0, 0, 0))
 
-    pygameWindow.screen.blit(timesCorrect,(675, 950))
+    if(key in userRecord):
+        timesCorrect = font.render("Times correct: " + str(userRecord[key]), True, (0, 0, 0))
+        pygameWindow.screen.blit(timesCorrect,(675, 950))
+
+    
     pygameWindow.screen.blit(aslDigit,(675,900))  
     daNumba = pygame.image.load("/Users/chief/Desktop/LeapDeveloperKit_2.3.1+31549_mac/LeapSDK/lib/CS228/Del9/ASLNUMS/"+num+".png")
     aslSign = pygame.image.load("/Users/chief/Desktop/LeapDeveloperKit_2.3.1+31549_mac/LeapSDK/lib/CS228/Del9/ASLNUMS/asl"+num+".png")
@@ -317,9 +320,9 @@ def displayASL():
 
     # #we want to take away the gesture image 
     if(key in userRecord):
-        if(userRecord[key] == dic['4'] or userRecord[key] == dic['5'] or userRecord[key] == dic['6'] or userRecord[key] == dic['7'] or userRecord[key] == dic['8']
-        or userRecord[key] == dic['9'] or userRecord[key] == dic['10'] or userRecord[key] == dic['11'] or userRecord[key] == dic['12']):
-            
+        #the user has successfully signed the number 4 or more times
+        #so hide the ASL gesture image
+        if(userRecord.get(key) >= 4):
             aslSign = pygame.image.load("/Users/chief/Desktop/LeapDeveloperKit_2.3.1+31549_mac/LeapSDK/lib/CS228/Del9/ASLNUMS/hideImage.png")
             
     pygameWindow.screen.blit(aslSign, (675, 625))
@@ -336,6 +339,9 @@ def correctGesture(aslNum):
     global signCorrect
     global key
     global convert
+    global signedWrong
+
+    signedWrong = []
     
     predictedClass = clf.Predict(testData)
 
@@ -346,15 +352,21 @@ def correctGesture(aslNum):
     if(predictedClass != aslNum[whichDigit]):
         framesGoneBy+=1
         framesCorrect = 0
-       
         programState = 2
 
     if(framesGoneBy >= framesToGuess):
         pickle.dump(database, open('userData/database.p','wb'))
-        whichDigit+= 1
         framesGoneBy = 0
+        #append the digit that was signed wrong
+        signedWrong.append(whichDigit)
+        #signed 9 wrong --> move on to 0
+        if(whichDigit == 9):
+            whichDigit = 0
+        else:
+            whichDigit+=1
         programState = 2
         sucess = False
+    
       
     if(framesCorrect >= signCorrect):
         #increment whichDigit because of successful sign

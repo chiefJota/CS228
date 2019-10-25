@@ -2,64 +2,67 @@
 S'jj'
 p1
 (dp2
-S'0Sucessful signs'
+S'digit5presented'
 p3
-I1
-sS'4Sucessful signs'
+I4
+sS'2 Sucessful signs'
 p4
-I2
-sS'6Sucessful signs'
+I4
+sS'8 Sucessful signs'
 p5
-I1
-sS'1Sucessful signs'
+I4
+sS'5 Sucessful signs'
 p6
-I2
-sS'digit5presented'
+I4
+sS'9 Sucessful signs'
 p7
-I2
+I4
 sS'logins'
 p8
 I1
-sS'digit8presented'
+sS'1 Sucessful signs'
 p9
-I1
-sS'digit6presented'
+I4
+sS'digit8presented'
 p10
-I1
-sS'digit9presented'
+I4
+sS'7 Sucessful signs'
 p11
-I1
-sS'digit4presented'
+I4
+sS'0 Sucessful signs'
 p12
-I2
-sS'2Sucessful signs'
+I4
+sS'digit9presented'
 p13
-I2
-sS'digit2presented'
+I4
+sS'digit4presented'
 p14
-I2
-sS'3Sucessful signs'
+I4
+sS'3 Sucessful signs'
 p15
-I2
-sS'digit0presented'
+I4
+sS'digit2presented'
 p16
-I1
-sS'digit3presented'
+I4
+sS'4 Sucessful signs'
 p17
-I2
-sS'8Sucessful signs'
+I4
+sS'digit0presented'
 p18
-I1
-sS'digit1presented'
+I13
+sS'digit3presented'
 p19
-I3
-sS'5Sucessful signs'
+I4
+sS'digit1presented'
 p20
-I2
-sS'7Sucessful signs'
+I7
+sS'digit6presented'
 p21
-I1
-sS'digit7presented'
+I4
+sS'6 Sucessful signs'
 p22
-I1
+I4
+sS'digit7presented'
+p23
+I4
 ss.
