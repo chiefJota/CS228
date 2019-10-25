@@ -70,9 +70,9 @@ sucess = False
 digitPresented = " "
 framesGoneBy = 0
 
-whichDigit = 1
-framesToGuess = 0
-signCorrect = 0
+whichDigit = 0
+framesToGuess = 35
+signCorrect = 10
 
 ########################################## 
     
@@ -179,7 +179,6 @@ def HandleState3(frame, handlist):
     sucess = False
     sucessCount = 0
 
-
     if(not HandOverDevice(frame, handlist)):
         programState = 0
 
@@ -204,15 +203,23 @@ def displayASL():
     global userRecord
     global aslDigit
     global whichDigit
-     
+    global daNumba
+    global aslSign
+    global key
+    global convert
+    global framesToGuess
+    global timesCorrect
     pygame.font.init()
     font = pygame.font.SysFont("Comic Sans MS", 32)
+
     aslNum = range(0,10)
+    #choose asl to gesture
+    numToGesture = aslNum[whichDigit]
+    dic = {'1':1,'2':2,'3':3,'4':4,'5':5,'6':6,'7':7,'8':8,'9':9,'10':10,'11':11,'12':12}
+
     
     if sucess == False:
-        #choose asl to gesture
-        numToGesture = aslNum[whichDigit]
-    
+        
         if numToGesture == aslNum[0]:
             if('digit0presented' in userRecord):
                 userRecord['digit0presented'] = userRecord['digit0presented'] + 1
@@ -292,14 +299,29 @@ def displayASL():
                 userRecord['digit9presented'] = 1
             aslDigit = font.render("Times Presented: " + str(userRecord['digit9presented']), True, (0, 0, 0))
             num = '9'
+        
+    #TODO: Remove gesture image user has signed 4 sucessful times for a digit 
+    # Might have to use another dictionary and compare whether or not == 4
 
-    #TODO: check if user has signed 3 sucessful times for each digit        
-             
     sucess = True
-    pygameWindow.screen.blit(aslDigit,(675,850))  
+    
+    convert = str(whichDigit)
+    key = (convert + " Sucessful signs") 
+    timesCorrect = font.render("Times correct: " + str(userRecord[key]), True, (0, 0, 0))
+
+    pygameWindow.screen.blit(timesCorrect,(675, 950))
+    pygameWindow.screen.blit(aslDigit,(675,900))  
     daNumba = pygame.image.load("/Users/chief/Desktop/LeapDeveloperKit_2.3.1+31549_mac/LeapSDK/lib/CS228/Del9/ASLNUMS/"+num+".png")
-    pygameWindow.screen.blit(daNumba, (750, 175))
     aslSign = pygame.image.load("/Users/chief/Desktop/LeapDeveloperKit_2.3.1+31549_mac/LeapSDK/lib/CS228/Del9/ASLNUMS/asl"+num+".png")
+    pygameWindow.screen.blit(daNumba, (750, 175))
+
+    # #we want to take away the gesture image 
+    if(key in userRecord):
+        if(userRecord[key] == dic['4'] or userRecord[key] == dic['5'] or userRecord[key] == dic['6'] or userRecord[key] == dic['7'] or userRecord[key] == dic['8']
+        or userRecord[key] == dic['9'] or userRecord[key] == dic['10'] or userRecord[key] == dic['11'] or userRecord[key] == dic['12']):
+            
+            aslSign = pygame.image.load("/Users/chief/Desktop/LeapDeveloperKit_2.3.1+31549_mac/LeapSDK/lib/CS228/Del9/ASLNUMS/hideImage.png")
+            
     pygameWindow.screen.blit(aslSign, (675, 625))
     correctGesture(aslNum)
 #############################################   
@@ -312,43 +334,37 @@ def correctGesture(aslNum):
     global whichDigit
     global framesToGuess
     global signCorrect
-    #check to see if the predictedNum is matching
-    #the aslNum
+    global key
+    global convert
+    
     predictedClass = clf.Predict(testData)
 
-    framesToGuess = 35
-    signCorrect = 10
-   # print(predictedClass)
     if(predictedClass == aslNum[whichDigit]):
         framesCorrect+=1
         framesGoneBy+=1
-       # print(framesGoneBy)
-       # print("FRAMES CORRECT: " + framesCorrect)
-        print(predictedClass)
+       
     if(predictedClass != aslNum[whichDigit]):
         framesGoneBy+=1
         framesCorrect = 0
-        #print(framesGoneBy)
-        print(predictedClass)
+       
         programState = 2
 
     if(framesGoneBy >= framesToGuess):
         pickle.dump(database, open('userData/database.p','wb'))
+        whichDigit+= 1
         framesGoneBy = 0
         programState = 2
         sucess = False
-       # print(framesGoneBy)
-        print(predictedClass)
-    
+      
     if(framesCorrect >= signCorrect):
         #increment whichDigit because of successful sign
         #only if digit is less than or equal to 9
+        convert = str(whichDigit)
+        key = (convert + " Sucessful signs")   
 
         if(whichDigit < 9):
-            convert = str(whichDigit)
-            key = (convert + " Sucessful signs")
             #create a dictionary for sucessful sign 
-            if(key in userRecord):
+            if(key in userRecord):   
                 #increment it 
                 userRecord[key] = userRecord[key] + 1
             #not in dictionary
@@ -356,8 +372,14 @@ def correctGesture(aslNum):
                 userRecord[key] = 1
             whichDigit+=1
         #otherwise bring it back to 0
-        
+
         elif(whichDigit == 9):
+            if(key in userRecord):   
+                #increment it 
+                userRecord[key] = userRecord[key] + 1
+            #not in dictionary
+            else:
+                userRecord[key] = 1
             whichDigit = 0
 
         framesGoneBy = 0
@@ -420,18 +442,10 @@ def Handle_Vector_From_Leap(v):
 def Handle_Bone(bone):
     global width
     global base, tip
-    
-    #xBase = int(base[0])
-    #yBase = int(base[1])
-    # xTip = int(tip[0])
-    # yTip = int(tip[1])
 
     #Modifying the code to make sure that it workss
     global xTip,yTip,zTip
-   # xTip = int(tip[0])
-    #yTip = int(tip[1])
-    #zTip = int(tip[2])
-
+  
     baseInfo = Handle_Vector_From_Leap(base)
     tipInfo = Handle_Vector_From_Leap(tip)
 
