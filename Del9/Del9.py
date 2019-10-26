@@ -73,6 +73,8 @@ framesGoneBy = 0
 whichDigit = 0
 framesToGuess = 35
 signCorrect = 10
+scaffoldingTwo = 4
+scaffoldingThree = 6
 
 ########################################## 
     
@@ -220,7 +222,7 @@ def displayASL():
     
     if sucess == False:
         
-        if numToGesture == aslNum[0]:
+        if(numToGesture == aslNum[0]):
             if('digit0presented' in userRecord):
                 userRecord['digit0presented'] = userRecord['digit0presented'] + 1
             else:
@@ -228,7 +230,7 @@ def displayASL():
             aslDigit = font.render("Times Presented: " + str(userRecord['digit0presented']), True, (0, 0, 0))
             num = '0'
 
-        if numToGesture == aslNum[1]:
+        if(numToGesture == aslNum[1]):
             if('digit1presented' in userRecord):
                 userRecord['digit1presented'] = userRecord['digit1presented'] + 1
             else:
@@ -236,7 +238,7 @@ def displayASL():
             aslDigit = font.render("Times Presented: " + str(userRecord['digit1presented']), True, (0, 0, 0))
             num = '1'
 
-        if numToGesture == aslNum[2]:
+        if(numToGesture == aslNum[2]):
             if('digit2presented' in userRecord):
                 userRecord['digit2presented'] = userRecord['digit2presented'] + 1
             else:
@@ -244,14 +246,14 @@ def displayASL():
             aslDigit = font.render("Times Presented: " + str(userRecord['digit2presented']), True, (0, 0, 0))
             num = '2'
 
-        if numToGesture == aslNum[3]:
+        if(numToGesture == aslNum[3]):
             if('digit3presented' in userRecord):
                 userRecord['digit3presented'] = userRecord['digit3presented'] + 1
             else:
                 userRecord['digit3presented'] = 1
             aslDigit = font.render("Times Presented: " + str(userRecord['digit3presented']), True, (0, 0, 0))
             num = '3'
-        if numToGesture == aslNum[4]:
+        if(numToGesture == aslNum[4]):
             if('digit4presented' in userRecord):
                 userRecord['digit4presented'] = userRecord['digit4presented'] + 1
                 
@@ -260,7 +262,7 @@ def displayASL():
             aslDigit = font.render("Times Presented: " + str(userRecord['digit4presented']), True, (0, 0, 0))
             num = '4'
 
-        if numToGesture == aslNum[5]:
+        if(numToGesture == aslNum[5]):
             if('digit5presented' in userRecord):
                 userRecord['digit5presented'] = userRecord['digit5presented'] + 1
             else:
@@ -268,7 +270,7 @@ def displayASL():
             aslDigit = font.render("Times Presented: " + str(userRecord['digit5presented']), True, (0, 0, 0))
             num = '5'
 
-        if numToGesture == aslNum[6]:
+        if(numToGesture == aslNum[6]):
             if('digit6presented' in userRecord):
                 userRecord['digit6presented'] = userRecord['digit6presented'] + 1
             else:
@@ -276,7 +278,7 @@ def displayASL():
             aslDigit = font.render("Times Presented: " + str(userRecord['digit6presented']), True, (0, 0, 0))
             num = '6'
 
-        if numToGesture == aslNum[7]:
+        if(numToGesture == aslNum[7]):
             if('digit7presented' in userRecord):
                 userRecord['digit7presented'] = userRecord['digit7presented'] + 1
             else:
@@ -284,7 +286,7 @@ def displayASL():
             aslDigit = font.render("Times Presented: " + str(userRecord['digit7presented']), True, (0, 0, 0))
             num = '7'
 
-        if numToGesture == aslNum[8]:
+        if(numToGesture == aslNum[8]):
             if('digit8presented' in userRecord):
                 userRecord['digit8presented'] = userRecord['digit8presented'] + 1
             else:
@@ -292,40 +294,42 @@ def displayASL():
             aslDigit = font.render("Times Presented: " + str(userRecord['digit8presented']), True, (0, 0, 0))
             num = '8'
 
-        if numToGesture == aslNum[9]:
+        if(numToGesture == aslNum[9]):
             if('digit9presented' in userRecord):
                 userRecord['digit9presented'] = userRecord['digit9presented'] + 1
             else:
                 userRecord['digit9presented'] = 1
             aslDigit = font.render("Times Presented: " + str(userRecord['digit9presented']), True, (0, 0, 0))
             num = '9'
-        
-    #TODO: Remove gesture image user has signed 4 sucessful times for a digit 
-    # Might have to use another dictionary and compare whether or not == 4
-
+    
     sucess = True
     
     convert = str(whichDigit)
     key = (convert + " Sucessful signs") 
 
-    if(key in userRecord):
-        timesCorrect = font.render("Times correct: " + str(userRecord[key]), True, (0, 0, 0))
-        pygameWindow.screen.blit(timesCorrect,(675, 950))
-
-    
     pygameWindow.screen.blit(aslDigit,(675,900))  
     daNumba = pygame.image.load("/Users/chief/Desktop/LeapDeveloperKit_2.3.1+31549_mac/LeapSDK/lib/CS228/Del9/ASLNUMS/"+num+".png")
     aslSign = pygame.image.load("/Users/chief/Desktop/LeapDeveloperKit_2.3.1+31549_mac/LeapSDK/lib/CS228/Del9/ASLNUMS/asl"+num+".png")
     pygameWindow.screen.blit(daNumba, (750, 175))
 
-    # #we want to take away the gesture image 
+    #display the asl gesture if sucessful for 3 times
+    if((key not in userRecord) or (userRecord.get(key) <= scaffoldingTwo)):
+        pygameWindow.screen.blit(aslSign, (675, 625))
+        
+
     if(key in userRecord):
+        timesCorrect = font.render("Times correct: " + str(userRecord[key]), True, (0, 0, 0))
+        pygameWindow.screen.blit(timesCorrect,(675, 950))
         #the user has successfully signed the number 4 or more times
         #so hide the ASL gesture image
-        if(userRecord.get(key) >= 4):
+        if(userRecord.get(key) >= scaffoldingTwo):
             aslSign = pygame.image.load("/Users/chief/Desktop/LeapDeveloperKit_2.3.1+31549_mac/LeapSDK/lib/CS228/Del9/ASLNUMS/hideImage.png")
-            
-    pygameWindow.screen.blit(aslSign, (675, 625))
+            pygameWindow.screen.blit(aslSign, (625, 625))
+            if(userRecord.get(key) >= scaffoldingThree):
+                framesToGuess = 25
+            else:
+                framesToGuess = 35
+
     correctGesture(aslNum)
 #############################################   
 def correctGesture(aslNum):
@@ -339,10 +343,7 @@ def correctGesture(aslNum):
     global signCorrect
     global key
     global convert
-    global signedWrong
-
-    signedWrong = []
-    
+   
     predictedClass = clf.Predict(testData)
 
     if(predictedClass == aslNum[whichDigit]):
@@ -357,23 +358,15 @@ def correctGesture(aslNum):
     if(framesGoneBy >= framesToGuess):
         pickle.dump(database, open('userData/database.p','wb'))
         framesGoneBy = 0
-        #append the digit that was signed wrong
-        signedWrong.append(whichDigit)
-        #signed 9 wrong --> move on to 0
-        if(whichDigit == 9):
-            whichDigit = 0
-        else:
-            whichDigit+=1
         programState = 2
         sucess = False
     
-      
     if(framesCorrect >= signCorrect):
         #increment whichDigit because of successful sign
         #only if digit is less than or equal to 9
         convert = str(whichDigit)
         key = (convert + " Sucessful signs")   
-
+        
         if(whichDigit < 9):
             #create a dictionary for sucessful sign 
             if(key in userRecord):   
