@@ -75,7 +75,6 @@ framesToGuess = 35
 signCorrect = 10
 scaffoldingTwo = 4
 scaffoldingThree = 6
-
 ########################################## 
     
 def handLocation(base):
@@ -326,7 +325,7 @@ def displayASL():
             aslSign = pygame.image.load("/Users/chief/Desktop/LeapDeveloperKit_2.3.1+31549_mac/LeapSDK/lib/CS228/Del9/ASLNUMS/hideImage.png")
             pygameWindow.screen.blit(aslSign, (625, 625))
             if(userRecord.get(key) >= scaffoldingThree):
-                framesToGuess = 25
+                framesToGuess = 18
             else:
                 framesToGuess = 35
 
@@ -377,7 +376,6 @@ def correctGesture(aslNum):
                 userRecord[key] = 1
             whichDigit+=1
         #otherwise bring it back to 0
-
         elif(whichDigit == 9):
             if(key in userRecord):   
                 #increment it 
