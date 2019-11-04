@@ -184,7 +184,7 @@ def HandleState2(frame, handlist):
 ########################################## 
 def HandleState3(frame, handlist):
     global programState, sucess
-    successImage = pygame.image.load("/Users/chief/Desktop/LeapDeveloperKit_2.3.1+31549_mac/LeapSDK/lib/CS228/Del9/ASLNUMS/aslSucess.jpg")
+    successImage = pygame.image.load("/Users/chief/Desktop/LeapDeveloperKit_2.3.1+31549_mac/LeapSDK/lib/CS228/Del10/ASLNUMS/aslSucess.jpg")
     successImage = pygameWindow.screen.blit(successImage, (constants.pygameWindowWidth/2 + constants.pygameWindowWidth/8, 150))  
     sucess = False
     
@@ -220,6 +220,8 @@ def displayASL():
     global timesCorrect
     global currentSessionCorrect
     global currSessionPresented
+    global database
+    global framesCorrect
     pygame.font.init()
     font = pygame.font.SysFont("Comic Sans MS", 32)
 
@@ -309,19 +311,17 @@ def displayASL():
             aslDigit = font.render("Times Presented: " + str(userRecord['digit9presented']), True, (0, 0, 0))
             num = '9'
 
-
-
     currSessionPresented = float(currSessionPresented)
     currentSessionCorrect  = float(currentSessionCorrect)
 
     draw_userProgress(currentSessionCorrect, currSessionPresented)
-
     draw_prevProgress(userRecord)
+    compareUsers(database)
+    drawGestureStatus(framesCorrect)
     
     sucess = True
 
-    
-    
+
     convert = str(whichDigit)
     key = (convert + " Sucessful signs") 
 
@@ -428,7 +428,109 @@ def correctGesture(aslNum):
         #dump contents of dictionary in pickled file
         pickle.dump(database, open('userData/database.p','wb'))
 
-#############################################     
+############################################# 
+def drawGestureStatus(framesCorrect):
+
+    color = (0, 0, 0)
+    pygame.draw.arc(pygameWindow.screen, color, [212.5, 625, 250, 250], 0, pi/2, 5)  
+    pygame.draw.arc(pygameWindow.screen, color, [212.5, 625, 250, 250], pi/2, pi, 5)    
+    pygame.draw.arc(pygameWindow.screen, color, [212.5, 625, 250, 250], pi, 3*pi/2, 5)    
+    pygame.draw.arc(pygameWindow.screen, color, [212.5, 625, 250, 250], 3*pi/2, 2*pi, 5)  
+
+    cold = pygame.image.load("/Users/chief/Desktop/LeapDeveloperKit_2.3.1+31549_mac/LeapSDK/lib/CS228/Del10/ASLNUMS/cold.png")
+    warm = pygame.image.load("/Users/chief/Desktop/LeapDeveloperKit_2.3.1+31549_mac/LeapSDK/lib/CS228/Del10/ASLNUMS/warm.png")
+    hot = pygame.image.load("/Users/chief/Desktop/LeapDeveloperKit_2.3.1+31549_mac/LeapSDK/lib/CS228/Del10/ASLNUMS/10Success.png")
+    
+
+    if(framesCorrect == 0):
+        #display thumbs down 
+        cold = pygameWindow.screen.blit(cold, (275, 515))  
+        color = (255, 0, 0)
+        pygame.draw.arc(pygameWindow.screen, color, [212.5, 625, 250, 250], 0, pi/2, 5)  
+        pygame.draw.arc(pygameWindow.screen, color, [212.5, 625, 250, 250], pi/2, pi, 5)    
+        pygame.draw.arc(pygameWindow.screen, color, [212.5, 625, 250, 250], pi, 3*pi/2, 5)    
+        pygame.draw.arc(pygameWindow.screen, color, [212.5, 625, 250, 250], 3*pi/2, 2*pi, 5)  
+    
+    elif(framesCorrect > 0 and framesCorrect <= 9):
+        #display thumbs up
+        warm = pygameWindow.screen.blit(warm, (275, 515)) 
+        color = (0, 255, 0)
+        pygame.draw.arc(pygameWindow.screen, color, [212.5, 625, 250, 250], 0, pi/2, 5)  
+        pygame.draw.arc(pygameWindow.screen, color, [212.5, 625, 250, 250], pi/2, pi, 5)    
+        pygame.draw.arc(pygameWindow.screen, color, [212.5, 625, 250, 250], pi, 3*pi/2, 5)    
+        pygame.draw.arc(pygameWindow.screen, color, [212.5, 625, 250, 250], 3*pi/2, 2*pi, 5)  
+    
+    elif(framesCorrect >= 10):
+        #display gold thumbs up
+        hot = pygameWindow.screen.blit(hot, (275, 515)) 
+        color = (255, 215, 0)
+        pygame.draw.arc(pygameWindow.screen, color, [212.5, 625, 250, 250], 0, pi/2, 5)  
+        pygame.draw.arc(pygameWindow.screen, color, [212.5, 625, 250, 250], pi/2, pi, 5)    
+        pygame.draw.arc(pygameWindow.screen, color, [212.5, 625, 250, 250], pi, 3*pi/2, 5)    
+        pygame.draw.arc(pygameWindow.screen, color, [212.5, 625, 250, 250], 3*pi/2, 2*pi, 5)   
+
+
+############################################# 
+def compareUsers(database):
+
+    pygame.font.init()
+    font = pygame.font.SysFont("Comic Sans MS", 24)
+
+    prevSeshSeen = 'prevSessionPresented'
+    prevSeshCorrect = 'prevSessionCorrect'
+    totalSeen = 0
+    totalCorrect = 0
+    for i in database:
+        if(prevSeshSeen in database[i]):
+            totalSeen += database[i][prevSeshSeen]
+            if(prevSeshCorrect in database[i]):
+                totalCorrect += database[i][prevSeshCorrect]
+            else:
+                totalCorrect += 0
+        else:
+            totalSeen += 0
+
+    
+    if(totalSeen == 0 or totalCorrect == 0):
+        averageSuccess = 0.0
+    else:
+        averageSuccess = float(totalCorrect/totalSeen)
+        averageSuccessPrecentage = round(float(averageSuccess * 100), 2)
+    averageProgress = font.render("Avg Sucess %: " + str(averageSuccessPrecentage), True, (0, 0, 255))
+    pygameWindow.screen.blit(averageProgress, (5, 850))
+
+    color = (0, 0, 0)
+
+    pygame.draw.arc(pygameWindow.screen, color, [25, 866, 100, 100], 0, pi/2, 5)  
+    pygame.draw.arc(pygameWindow.screen, color, [25, 866, 100, 100], pi/2, pi, 5)    
+    pygame.draw.arc(pygameWindow.screen, color, [25, 866, 100, 100], pi, 3*pi/2, 5)    
+    pygame.draw.arc(pygameWindow.screen, color, [25, 866, 100, 100], 3*pi/2, 2*pi, 5)  
+
+    
+    #if the userProgress is less than 25 make the color red
+    if(averageSuccess <= 0.25):
+        color = (255, 0, 0)
+        pygame.draw.arc(pygameWindow.screen, color, [25, 866, 100, 100], 0, pi/2, 5)  
+       
+    elif(averageSuccess >= 0.25 and averageSuccess <= 0.50):
+        color = (255,140,0)
+        pygame.draw.arc(pygameWindow.screen, color, [25, 866, 100, 100], 0, pi/2, 5)  
+        pygame.draw.arc(pygameWindow.screen, color, [25, 866, 100, 100], pi/2, pi, 5)      
+       
+    elif(averageSuccess >= 0.50 and averageSuccess <= 0.75):
+        color = (255, 255, 0)
+        pygame.draw.arc(pygameWindow.screen, color, [25, 866, 100, 100], 0, pi/2, 5)  
+        pygame.draw.arc(pygameWindow.screen, color, [25, 866, 100, 100], pi/2, pi, 5)    
+        pygame.draw.arc(pygameWindow.screen, color, [25, 866, 100, 100], pi, 3*pi/2, 5)    
+
+    elif(averageSuccess >= 0.75 and averageSuccess <= 1.00):
+        color = (0, 255, 0)
+        pygame.draw.arc(pygameWindow.screen, color, [25, 866, 100, 100], 0, pi/2, 5)  
+        pygame.draw.arc(pygameWindow.screen, color, [25, 866, 100, 100], pi/2, pi, 5)    
+        pygame.draw.arc(pygameWindow.screen, color, [25, 866, 100, 100], pi, 3*pi/2, 5)    
+        pygame.draw.arc(pygameWindow.screen, color, [25, 866, 100, 100], 3*pi/2, 2*pi, 5)   
+
+#############################################       
 # Draws a circle with the user progess                
 def draw_userProgress(currentSessionCorrect, currSessionPresented):
     #arc(surface, color, rect, start_angle, stop_angle, width=1) 
@@ -442,40 +544,40 @@ def draw_userProgress(currentSessionCorrect, currSessionPresented):
         userProgress = 0.0
     else:
         userProgress = float(currentSessionCorrect/currSessionPresented)
-        progPercentage = float(userProgress*100)
+        progPercentage = round(float(userProgress*100),2)
     userProg = font.render("Sucess %: " + str(progPercentage), True, (0, 0, 255))
-    pygameWindow.screen.blit(userProg,(50, 550))
+    pygameWindow.screen.blit(userProg,(5, 517))
 
     color = (0, 0, 0)
 
-    pygame.draw.arc(pygameWindow.screen, color, [50, 575, 100, 100], 0, pi/2, 8)  
-    pygame.draw.arc(pygameWindow.screen, color, [50, 575, 100, 100], pi/2, pi, 8)    
-    pygame.draw.arc(pygameWindow.screen, color, [50, 575, 100, 100], pi, 3*pi/2, 8)    
-    pygame.draw.arc(pygameWindow.screen, color, [50, 575, 100, 100], 3*pi/2, 2*pi, 8)  
+    pygame.draw.arc(pygameWindow.screen, color, [25, 533, 100, 100], 0, pi/2, 5)  
+    pygame.draw.arc(pygameWindow.screen, color, [25, 533, 100, 100], pi/2, pi, 5)    
+    pygame.draw.arc(pygameWindow.screen, color, [25, 533, 100, 100], pi, 3*pi/2, 5)    
+    pygame.draw.arc(pygameWindow.screen, color, [25, 533, 100, 100], 3*pi/2, 2*pi, 5)  
 
     
     #if the userProgress is less than 25 make the color red
     if(userProgress <= 0.25):
         color = (255, 0, 0)
-        pygame.draw.arc(pygameWindow.screen, color, [50, 575, 100, 100], 0, pi/2, 8)  
+        pygame.draw.arc(pygameWindow.screen, color, [25, 533, 100, 100], 0, pi/2, 5)  
        
     elif(userProgress >= 0.25 and userProgress <= 0.50):
         color = (255,140,0)
-        pygame.draw.arc(pygameWindow.screen, color, [50, 575, 100, 100], 0, pi/2, 8)  
-        pygame.draw.arc(pygameWindow.screen, color, [50, 575, 100, 100], pi/2, pi, 8)      
+        pygame.draw.arc(pygameWindow.screen, color, [25, 533, 100, 100], 0, pi/2, 5)  
+        pygame.draw.arc(pygameWindow.screen, color, [25, 533, 100, 100], pi/2, pi, 5)      
        
     elif(userProgress >= 0.50 and userProgress <= 0.75):
         color = (255, 255, 0)
-        pygame.draw.arc(pygameWindow.screen, color, [50, 575, 100, 100], 0, pi/2, 8)  
-        pygame.draw.arc(pygameWindow.screen, color, [50, 575, 100, 100], pi/2, pi, 8)    
-        pygame.draw.arc(pygameWindow.screen, color, [50, 575, 100, 100], pi, 3*pi/2, 8)    
+        pygame.draw.arc(pygameWindow.screen, color, [25, 533, 100, 100], 0, pi/2, 5)  
+        pygame.draw.arc(pygameWindow.screen, color, [25, 533, 100, 100], pi/2, pi, 5)    
+        pygame.draw.arc(pygameWindow.screen, color, [25, 533, 100, 100], pi, 3*pi/2, 5)    
 
     elif(userProgress >= 0.75 and userProgress <= 1.00):
         color = (0, 255, 0)
-        pygame.draw.arc(pygameWindow.screen, color, [50, 575, 100, 100], 0, pi/2, 8)  
-        pygame.draw.arc(pygameWindow.screen, color, [50, 575, 100, 100], pi/2, pi, 8)    
-        pygame.draw.arc(pygameWindow.screen, color, [50, 575, 100, 100], pi, 3*pi/2, 8)    
-        pygame.draw.arc(pygameWindow.screen, color, [50, 575, 100, 100], 3*pi/2, 2*pi, 8)   
+        pygame.draw.arc(pygameWindow.screen, color, [25, 533, 100, 100], 0, pi/2, 5)  
+        pygame.draw.arc(pygameWindow.screen, color, [25, 533, 100, 100], pi/2, pi, 5)    
+        pygame.draw.arc(pygameWindow.screen, color, [25, 533, 100, 100], pi, 3*pi/2, 5)    
+        pygame.draw.arc(pygameWindow.screen, color, [25, 533, 100, 100], 3*pi/2, 2*pi, 5)   
 
     
 ############################################# 
@@ -491,60 +593,63 @@ def draw_prevProgress(userRecord):
 
     color = (0, 0, 0)
 
-    pygame.draw.arc(pygameWindow.screen, color, [250, 575, 100, 100], 0, pi/2, 8)  
-    pygame.draw.arc(pygameWindow.screen, color, [250, 575, 100, 100], pi/2, pi, 8)    
-    pygame.draw.arc(pygameWindow.screen, color, [250, 575, 100, 100], pi, 3*pi/2, 8)    
-    pygame.draw.arc(pygameWindow.screen, color, [250, 575, 100, 100], 3*pi/2, 2*pi, 8)  
-
-
+    pygame.draw.arc(pygameWindow.screen, color, [25, 696, 100, 100], 0, pi/2, 5)  
+    pygame.draw.arc(pygameWindow.screen, color, [25, 696, 100, 100], pi/2, pi, 5)    
+    pygame.draw.arc(pygameWindow.screen, color, [25, 696, 100, 100], pi, 3*pi/2, 5)    
+    pygame.draw.arc(pygameWindow.screen, color, [25, 696, 100, 100], 3*pi/2, 2*pi, 5)  
 
     if(prevSeshProgress and prevSeshCorrect in userRecord):
         prevGestureSeen = userRecord.get(prevSeshProgress)
         prevGestureCorrect = userRecord.get(prevSeshCorrect)
-
-        prevSeshProgress = float(prevGestureCorrect/prevGestureSeen)
-        prevSeshPercentage = float(prevSeshProgress * 100)
-        prevSeshProg= font.render("Sucess %: " + str(prevSeshPercentage), True, (0, 0, 255))
+        if(prevGestureSeen == 0 and prevGestureCorrect == 0):
+            prevSeshProgress = 0.0
+            prevSeshPercentage = 0.0
+        else:
+            prevSeshProgress = float(prevGestureCorrect/prevGestureSeen)
+            prevSeshPercentage = round(float(prevSeshProgress * 100),2)
+        prevSeshProg= font.render("<-- Sucess %: " + str(prevSeshPercentage), True, (0, 0, 255))
 
 
         #if the userProgress is less than 25 make the color red
         if(prevSeshProgress <= 0.25):
             color = (255, 0, 0)
-            pygame.draw.arc(pygameWindow.screen, color, [250, 575, 100, 100], 0, pi/2, 8)  
+            pygame.draw.arc(pygameWindow.screen, color, [25, 696, 100, 100], 0, pi/2, 5)  
         
         elif(prevSeshProgress >= 0.25 and prevSeshProgress <= 0.50):
             color = (255,140,0)
-            pygame.draw.arc(pygameWindow.screen, color, [250, 575, 100, 100], 0, pi/2, 8)  
-            pygame.draw.arc(pygameWindow.screen, color, [250, 575, 100, 100], pi/2, pi, 8)   
+            pygame.draw.arc(pygameWindow.screen, color, [25, 696, 100, 100], 0, pi/2, 5)  
+            pygame.draw.arc(pygameWindow.screen, color, [25, 696, 100, 100], pi/2, pi, 5)   
         
         elif(prevSeshProgress >= 0.50 and prevSeshProgress <= 0.75):
             color = (255, 255, 0)
-            pygame.draw.arc(pygameWindow.screen, color, [250, 575, 100, 100], 0, pi/2, 8)  
-            pygame.draw.arc(pygameWindow.screen, color, [250, 575, 100, 100], pi/2, pi, 8)    
-            pygame.draw.arc(pygameWindow.screen, color, [250, 575, 100, 100], pi, 3*pi/2, 8)    
+            pygame.draw.arc(pygameWindow.screen, color, [25, 696, 100, 100], 0, pi/2, 5)  
+            pygame.draw.arc(pygameWindow.screen, color, [25, 696, 100, 100], pi/2, pi, 5)    
+            pygame.draw.arc(pygameWindow.screen, color, [25, 696, 100, 100], pi, 3*pi/2, 5)    
 
         elif(prevSeshProgress >= 0.75 and prevSeshProgress <= 1.00):
             color = (0, 255, 0)
-            pygame.draw.arc(pygameWindow.screen, color, [250, 575, 100, 100], 0, pi/2, 8)  
-            pygame.draw.arc(pygameWindow.screen, color, [250, 575, 100, 100], pi/2, pi, 8)    
-            pygame.draw.arc(pygameWindow.screen, color, [250, 575, 100, 100], pi, 3*pi/2, 8)    
-            pygame.draw.arc(pygameWindow.screen, color, [250, 575, 100, 100], 3*pi/2, 2*pi, 8)  
+            pygame.draw.arc(pygameWindow.screen, color, [25, 696, 100, 100], 0, pi/2, 5)  
+            pygame.draw.arc(pygameWindow.screen, color, [25, 696, 100, 100], pi/2, pi, 5)    
+            pygame.draw.arc(pygameWindow.screen, color, [25, 696, 100, 100], pi, 3*pi/2, 5)    
+            pygame.draw.arc(pygameWindow.screen, color, [25, 696, 100, 100], 3*pi/2, 2*pi, 5)  
     #there is no previous session
     if(prevSeshProgress and prevSeshCorrect not in userRecord):
-        prevSeshProg= font.render(" <-- Sesh Success %: " + str(0.0), True, (0, 0, 255))
+        prevSeshProg= font.render("<-- Sesh Success %: " + str(0.0), True, (0, 0, 255))
         color = (255, 0, 0)
-        pygame.draw.arc(pygameWindow.screen, color, [250, 575, 100, 100], 0, pi/2, 8)  
-        pygame.draw.arc(pygameWindow.screen, color, [250, 575, 100, 100], pi/2, pi, 8)    
-        pygame.draw.arc(pygameWindow.screen, color, [250, 575, 100, 100], pi, 3*pi/2, 8)    
-        pygame.draw.arc(pygameWindow.screen, color, [250, 575, 100, 100], 3*pi/2, 2*pi, 8)  
+        pygame.draw.arc(pygameWindow.screen, color, [25, 696, 100, 100], 0, pi/2, 5)  
+        pygame.draw.arc(pygameWindow.screen, color, [25, 696, 100, 100], pi/2, pi, 5)    
+        pygame.draw.arc(pygameWindow.screen, color, [25, 696, 100, 100], pi, 3*pi/2, 5)    
+        pygame.draw.arc(pygameWindow.screen, color, [25, 696, 100, 100], 3*pi/2, 2*pi, 5)  
 
-    pygameWindow.screen.blit(prevSeshProg,(200, 550))
+    pygameWindow.screen.blit(prevSeshProg,(5, 680))
         
 #############################################                     
 def draw_panels():
     pygame.draw.line(pygameWindow.screen, (0,0,0),(constants.pygameWindowWidth/2, 0), (constants.pygameWindowWidth/2, constants.pygameWindowDepth), 2)
     pygame.draw.line(pygameWindow.screen, (0,0,0),(0, constants.pygameWindowDepth/2), (constants.pygameWindowWidth, constants.pygameWindowDepth/2), 2)
-
+    pygame.draw.line(pygameWindow.screen, (0,0,0), (175, constants.pygameWindowDepth/2), (175, constants.pygameWindowDepth), 2)
+    pygame.draw.line(pygameWindow.screen, (0,0,0), (0, 666), (175, 666), 2)
+    pygame.draw.line(pygameWindow.screen, (0,0,0), (0, 833), (175, 833), 2)
 ##########################################  
 def CenterData(testData):
     allXCoordinates = testData[0,::3]
@@ -602,8 +707,6 @@ def Handle_Bone(bone):
         color = (0, 255, 0)
     elif(correctSign == False):
         color = (255,0,0)
-    
-
     #change to this eventually so that hand is drawn correctly
     pygameWindow.Draw_Line(color, baseInfo[0], baseInfo[1], tipInfo[0], tipInfo[1], width)
    
@@ -710,6 +813,7 @@ while True:
     if(programState == 0):
         HandleState0(frame, handlist)
     if(programState == 1):
+        correctSign = False
         HandleState1(frame, handlist)
     if(programState == 2):
         HandleState2(frame, handlist)
