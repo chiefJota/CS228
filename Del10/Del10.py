@@ -341,8 +341,6 @@ def displayASL():
         #the user has successfully signed the number 4 or more times
         #so hide the ASL gesture image
         if(userRecord.get(key) >= scaffoldingTwo):
-            # aslSign = pygame.image.load("/Users/chief/Desktop/LeapDeveloperKit_2.3.1+31549_mac/LeapSDK/lib/CS228/Del9/ASLNUMS/hideImage.png")
-            # pygameWindow.screen.blit(aslSign, (625, 625))
             if(userRecord.get(key) >= scaffoldingThree):
                 framesToGuess = 18
             else:
@@ -371,15 +369,11 @@ def correctGesture(aslNum):
     predictedClass = clf.Predict(testData)
 
     if(predictedClass == aslNum[whichDigit]):
-      #  framesUntilCorrect-= 1
-       # famesTilCorrect = font.render("Frames Until Correct: " + str(framesUntilCorrect), True, (0, 0, 255))
-      #  pygameWindow.screen.blit(famesTilCorrect, (175, 750))
         correctSign = True
         framesCorrect+=1
         framesGoneBy+=1
        
     if(predictedClass != aslNum[whichDigit]):
-      #  famesTilCorrect = font.render("Frames Until Correct: " + str(framesUntilCorrect), True, (0, 0, 255))
         correctSign = False
         framesGoneBy+= 1 
         framesCorrect = 0
@@ -493,10 +487,11 @@ def compareUsers(database):
     
     if(totalSeen == 0 or totalCorrect == 0):
         averageSuccess = 0.0
+        averageSuccessPercentage = 0.0
     else:
         averageSuccess = float(totalCorrect/totalSeen)
-        averageSuccessPrecentage = round(float(averageSuccess * 100), 2)
-    averageProgress = font.render("Avg Sucess %: " + str(averageSuccessPrecentage), True, (0, 0, 255))
+        averageSuccessPercentage = round(float(averageSuccess * 100), 2)
+    averageProgress = font.render("Avg Sucess %: " + str(averageSuccessPercentage), True, (0, 0, 255))
     pygameWindow.screen.blit(averageProgress, (5, 850))
 
     color = (0, 0, 0)
@@ -607,7 +602,7 @@ def draw_prevProgress(userRecord):
         else:
             prevSeshProgress = float(prevGestureCorrect/prevGestureSeen)
             prevSeshPercentage = round(float(prevSeshProgress * 100),2)
-        prevSeshProg= font.render("<-- Sucess %: " + str(prevSeshPercentage), True, (0, 0, 255))
+        prevSeshProg= font.render("Lst. Sucess %: " + str(prevSeshPercentage), True, (0, 0, 255))
 
 
         #if the userProgress is less than 25 make the color red
@@ -634,7 +629,7 @@ def draw_prevProgress(userRecord):
             pygame.draw.arc(pygameWindow.screen, color, [25, 696, 100, 100], 3*pi/2, 2*pi, 5)  
     #there is no previous session
     if(prevSeshProgress and prevSeshCorrect not in userRecord):
-        prevSeshProg= font.render("<-- Sesh Success %: " + str(0.0), True, (0, 0, 255))
+        prevSeshProg= font.render("Lst. Success %: " + str(0.0), True, (0, 0, 255))
         color = (255, 0, 0)
         pygame.draw.arc(pygameWindow.screen, color, [25, 696, 100, 100], 0, pi/2, 5)  
         pygame.draw.arc(pygameWindow.screen, color, [25, 696, 100, 100], pi/2, pi, 5)    
