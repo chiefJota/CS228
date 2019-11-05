@@ -42,11 +42,6 @@ def login():
     print(database)
 ##########################################
 
-#prints this: {'logins': 1, 'digit3attempted': 1}
-##########################################
-
-
-##########################################
 login()
 
 pygameWindow = PYGAME_WINDOW()
@@ -143,9 +138,9 @@ def isHandCentered(hand, framesCentered):
         framesCentered = 0
 
     #the hand has been centered for 25 frames    
-    if(framesCentered > 25):
+    if(framesCentered > 10):
         programState = 2
-    if(framesCentered < 25):
+    if(framesCentered < 10):
         programState = 1
     
     return framesCentered
@@ -483,7 +478,6 @@ def compareUsers(database):
                 totalCorrect += 0
         else:
             totalSeen += 0
-
     
     if(totalSeen == 0 or totalCorrect == 0):
         averageSuccess = 0.0
@@ -501,7 +495,6 @@ def compareUsers(database):
     pygame.draw.arc(pygameWindow.screen, color, [25, 866, 100, 100], pi, 3*pi/2, 5)    
     pygame.draw.arc(pygameWindow.screen, color, [25, 866, 100, 100], 3*pi/2, 2*pi, 5)  
 
-    
     #if the userProgress is less than 25 make the color red
     if(averageSuccess <= 0.25):
         color = (255, 0, 0)
@@ -540,7 +533,7 @@ def draw_userProgress(currentSessionCorrect, currSessionPresented):
     else:
         userProgress = float(currentSessionCorrect/currSessionPresented)
         progPercentage = round(float(userProgress*100),2)
-    userProg = font.render("Sucess %: " + str(progPercentage), True, (0, 0, 255))
+    userProg = font.render("Cur. Sucess %: " + str(progPercentage), True, (0, 0, 255))
     pygameWindow.screen.blit(userProg,(5, 517))
 
     color = (0, 0, 0)
