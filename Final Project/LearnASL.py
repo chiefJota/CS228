@@ -49,6 +49,7 @@ currSessionPresented = 0
 numFrames = 0
 
 isAbleToSign = False
+isLearningMath = True
 
 ####################################################################################
 def login():
@@ -177,17 +178,23 @@ def HandleState1(frame, handlist):
 def HandleState2(frame, handlist):
     global programState
     global framesGoneBy
-    displayASL()   
+    global isLearningMath
+
+    if(not isLearningMath):
+        displayASL() 
+    else:
+        teachMath()
     if(not HandOverDevice(frame, handlist)):
         programState = 0
         framesGoneBy = 0
 
 #################################################################################### 
 def HandleState3(frame, handlist):
-    global programState, sucess
+    global programState, sucess, isAbleToSign
     successImage = pygame.image.load("/Users/chief/Desktop/LeapDeveloperKit_2.3.1+31549_mac/LeapSDK/lib/CS228/Del10/ASLNUMS/aslSucess.jpg")
     successImage = pygameWindow.screen.blit(successImage, (constants.pygameWindowWidth/2 + constants.pygameWindowWidth/8, 150))  
     sucess = False
+    isAbleToSign = False
     
     if(not HandOverDevice(frame, handlist)):
         programState = 0
@@ -211,6 +218,8 @@ def teachMath():
     global Result
     global isLearningMath
     global theSum
+    global resultDigit
+    global framesCorrect
 
     pygame.font.init()
     font = pygame.font.SysFont("Comic Sans MS", 32)
@@ -230,7 +239,6 @@ def teachMath():
             resultToSign = randNum + randNum2
         #otherwise its valid
         else:
-            isAbleToSign = True
             #need to know whichDigit to sign
             theSum = resultToSign
             #now they are able to attempt to sign the sum
@@ -238,14 +246,19 @@ def teachMath():
             resultDigit = font.render(("Result of: " + resultString + "= ?"), True, (0, 0, 0))
             #display the equation to the screen
         #display the text until correct
-            pygameWindow.screen.blit(resultDigit, (750, 175))
-            pygame.time.wait(5000)
+            #pygame.time.wait(5000)
             isLearningMath = True
-    return isLearningMath, theSum
-   
 
+            isAbleToSign = True
+    pygameWindow.screen.blit(resultDigit, (675, 675))
 
+    draw_userProgress(currentSessionCorrect, currSessionPresented)
+    draw_prevProgress(userRecord)
+    compareUsers(database)
+    drawGestureStatus(framesCorrect)
 
+    correctSum(theSum)
+    
 ####################################################################################
 def displayASL():
     global aslNum, num
@@ -365,38 +378,32 @@ def displayASL():
     drawGestureStatus(framesCorrect)
 
     sucess = True
-    isLearningMath = True
+    
+    convert = str(whichDigit)
+    key = (convert + " Sucessful signs") 
 
-    if(not(isLearningMath)):
-        convert = str(whichDigit)
-        key = (convert + " Sucessful signs") 
+    pygameWindow.screen.blit(aslDigit,(675,900))  
+    daNumba = pygame.image.load("/Users/chief/Desktop/LeapDeveloperKit_2.3.1+31549_mac/LeapSDK/lib/CS228/Del9/ASLNUMS/"+num+".png")
+    aslSign = pygame.image.load("/Users/chief/Desktop/LeapDeveloperKit_2.3.1+31549_mac/LeapSDK/lib/CS228/Del9/ASLNUMS/asl"+num+".png")
+    pygameWindow.screen.blit(daNumba, (750, 175))
 
-        pygameWindow.screen.blit(aslDigit,(675,900))  
-        daNumba = pygame.image.load("/Users/chief/Desktop/LeapDeveloperKit_2.3.1+31549_mac/LeapSDK/lib/CS228/Del9/ASLNUMS/"+num+".png")
-        aslSign = pygame.image.load("/Users/chief/Desktop/LeapDeveloperKit_2.3.1+31549_mac/LeapSDK/lib/CS228/Del9/ASLNUMS/asl"+num+".png")
-        pygameWindow.screen.blit(daNumba, (750, 175))
+    #display the asl gesture if sucessful for 2 times
+    if((key not in userRecord) or (userRecord.get(key) <= scaffoldingTwo)):
+        pygameWindow.screen.blit(aslSign, (675, 625))
+        
 
-        #display the asl gesture if sucessful for 2 times
-        if((key not in userRecord) or (userRecord.get(key) <= scaffoldingTwo)):
-            pygameWindow.screen.blit(aslSign, (675, 625))
-            
+    if(key in userRecord):
+        timesCorrect = font.render("Times correct: " + str(userRecord[key]), True, (0, 0, 0))
+        pygameWindow.screen.blit(timesCorrect,(675, 950))
+        #the user has successfully signed the number 4 or more times
+        #so hide the ASL gesture image
+        if(userRecord.get(key) >= scaffoldingTwo):
+            if(userRecord.get(key) >= scaffoldingThree):
+                framesToGuess = 18
+            else:
+                framesToGuess = 35
 
-        if(key in userRecord):
-            timesCorrect = font.render("Times correct: " + str(userRecord[key]), True, (0, 0, 0))
-            pygameWindow.screen.blit(timesCorrect,(675, 950))
-            #the user has successfully signed the number 4 or more times
-            #so hide the ASL gesture image
-            if(userRecord.get(key) >= scaffoldingTwo):
-                if(userRecord.get(key) >= scaffoldingThree):
-                    framesToGuess = 18
-                else:
-                    framesToGuess = 35
-
-        correctGesture(aslNum)
-
-    else:
-        teachMath()
-        correctSum(theSum)
+    correctGesture(aslNum)
 
 #The same as correctGesture except 
 #it takes a single int rather than list
@@ -422,16 +429,15 @@ def correctSum(theSum):
     if(predictedClass == theSum):
         correctSign = True
         framesCorrect+=1
-        framesGoneBy+=1
 
     if(predictedClass != theSum):
         correctSign = False
-        framesGoneBy+= 1 
         framesCorrect = 0
         programState = 2
 
     if(framesCorrect >= signCorrect):
-        framesGoneBy = 0
+        #if a duplicate number appears after one just signed
+        framesCorrect = 0
         programState = 3
         print("success")
    
@@ -544,7 +550,7 @@ def drawGestureStatus(framesCorrect):
         pygame.draw.arc(pygameWindow.screen, color, [212.5, 625, 250, 250], pi, 3*pi/2, 5)    
         pygame.draw.arc(pygameWindow.screen, color, [212.5, 625, 250, 250], 3*pi/2, 2*pi, 5)  
     
-    elif(framesCorrect >= 10):
+    elif(framesCorrect == 10):
         #display gold thumbs up
         hot = pygameWindow.screen.blit(hot, (275, 515)) 
         color = (255, 215, 0)
