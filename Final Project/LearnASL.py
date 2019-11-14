@@ -50,12 +50,11 @@ currSessionPresented = 0
 numFrames = 0
 
 isAbleToSign = False
-isLearningMath = True
+isLearningMath = False
 isLearningAddition = False 
 isLearningSubtraction = False
 failing = False
-mathQsSeen = 0
-mathQsCorrect = 0
+
 
 ####################################################################################
 def login():
@@ -255,18 +254,14 @@ def HandleState2(frame, handlist):
     global isLearningMath
     global isLearningAddition 
     global isLearningSubtraction
+    global passOrFail
+    global userRecord
 
-    changeBackToASL()
+    #determines if user is passing or failing
+    #if they are failing they will go back to 
+    #learning how to sign digits from displayASL
+    changeBackToASL(userRecord)
 
-    if(isLearningMath == False):
-        displayASL() 
-
-    else:
-        teachMath()
-        if(isLearningAddition == True):
-            teachAddition()
-        elif(isLearningSubtraction == True):
-            teachSubtraction()
 
     if(not HandOverDevice(frame, handlist)):
         programState = 0
@@ -274,15 +269,15 @@ def HandleState2(frame, handlist):
 
 #################################################################################### 
 def HandleState3(frame, handlist):
-    global programState, sucess, isAbleToSign, isLearningAddition, isLearningSubtraction
+    global programState, sucess, isAbleToSign, isLearningAddition, isLearningSubtraction, framesCorrect
     successImage = pygame.image.load("/Users/chief/Desktop/LeapDeveloperKit_2.3.1+31549_mac/LeapSDK/lib/CS228/Del10/ASLNUMS/aslSucess.jpg")
     successImage = pygameWindow.screen.blit(successImage, (constants.pygameWindowWidth/2 + constants.pygameWindowWidth/8, 150))  
     sucess = False
     isAbleToSign = False
     isLearningAddition = False
     isLearningSubtraction = False
-    
-    
+    framesCorrect = 0
+
     if(not HandOverDevice(frame, handlist)):
         programState = 0
 
@@ -300,32 +295,57 @@ def HandOverDevice(frame, handlist):
 
 #################################################################################### 
 #will change back to ASL if the user falls below "failing" score
-def changeBackToASL():
-    global userRecord
-    global mathQsCorrect
-    global mathQsSeen
+def changeBackToASL(userRecord):
     global isLearningMath
     global isAbleToSign
+    global passOrFail
 
-    passOrFail = 0.0
-    questionsCorr = userRecord.get('signedCorrectEquation')
-    questionsPres = userRecord.get('attemptedEquation')
+    #need to check to see if both are in userRecord
+    if('attemptedEquation' and 'signedCorrectEquation' in userRecord):
+        signedCorrectEquation = userRecord.get('signedCorrectEquation')
+        attemptedEquation = userRecord.get('attemptedEquation')
+    else:
+        attemptedEquation = 0.0
+        signedCorrectEquation = 0.0
 
+    questionsPres = float(attemptedEquation)
+    questionsCorr = float(signedCorrectEquation)
+   
     #if more than 10 math equations have been presented 
     if(questionsPres >= 10):
-        #get the number of 
+        #get the grade
         passOrFail = float(questionsCorr/questionsPres)
         #if the percentage is <= 60 switch to asl
         if(passOrFail <= 0.60):
             isLearningMath = False
             isAbleToSign = False
-    else:
-        isLearningMath = True
+
+            #should reset so that you can alternate between states
+            userRecord['attemptedEquation'] = 0
+            userRecord['signedCorrectEquation'] = 0
+        
+        
+
+    
+    if(isLearningMath == False):
+        displayASL() 
+    if(isLearningMath == True):
+        teachMath()
+        if(isLearningAddition == True):
+            teachAddition()
+        elif(isLearningSubtraction == True):
+            teachSubtraction()
+
+        
 
 #################################################################################### 
 def teachMath():
     global isLearningAddition
     global isLearningSubtraction
+    global currentSessionCorrect
+    global currSessionPresented
+    global isLearningMath
+
     chooseMathFunc = random.randint(0,2)
     if(chooseMathFunc == 0):
         isLearningAddition = True
@@ -344,6 +364,8 @@ def teachAddition():
     global framesCorrect
     global userRecord
     global isLearningAddition
+    global currentSessionCorrect
+    global currSessionPresented
 
     pygame.font.init()
     font = pygame.font.SysFont("Comic Sans MS", 56)
@@ -379,6 +401,9 @@ def teachAddition():
             isAbleToSign = True
     pygameWindow.screen.blit(resultDigit, (635, 675))
 
+    currSessionPresented = float(currSessionPresented)
+    currentSessionCorrect  = float(currentSessionCorrect)
+
     draw_userProgress(currentSessionCorrect, currSessionPresented)
     draw_prevProgress(userRecord)
     compareUsers(database)
@@ -397,6 +422,9 @@ def teachSubtraction():
     global framesCorrect
     global userRecord
     global isLearningSubtraction
+    global currentSessionCorrect
+    global currSessionPresented
+
 
     pygame.font.init()
     font = pygame.font.SysFont("Comic Sans MS", 56)
@@ -431,6 +459,10 @@ def teachSubtraction():
             isAbleToSign = True
     pygameWindow.screen.blit(resultDigit, (635, 675))
 
+    currSessionPresented = float(currSessionPresented)
+    currentSessionCorrect  = float(currentSessionCorrect)
+
+
     draw_userProgress(currentSessionCorrect, currSessionPresented)
     draw_prevProgress(userRecord)
     compareUsers(database)
@@ -443,6 +475,7 @@ def teachSubtraction():
 #it takes a single int rather than list
 def correctSum(theSum):
     global programState
+    global userRecord
     global framesCorrect
     global sucess
     global predictedClass
@@ -460,8 +493,7 @@ def correctSum(theSum):
     global isLearningAddition
     global isLearningSubtraction
     global isAbleToSign
-    global mathQsSeen
-    global mathQsCorrect
+    
     framesToGuess = 35
 
     predictedClass = clf.Predict(testData)
@@ -470,23 +502,20 @@ def correctSum(theSum):
         correctSign = True
         framesCorrect+=1
         framesGoneBy+=1
-        print(framesGoneBy)
-       
-
+     
     if(predictedClass != theSum):
         correctSign = False
         framesCorrect = 0
         programState = 2
         framesGoneBy+=1
-        print(framesGoneBy)
        
     if(framesGoneBy >= framesToGuess):
-       #this way it will change to regular equation not using variables
+        currSessionPresented += 1
+        # #this way it will change to regular equation not using variables
         if('attemptedEquation' in userRecord):
            userRecord['attemptedEquation'] = userRecord['attemptedEquation'] + 1
         else:
             userRecord['attemptedEquation'] = 1
-        mathQsSeen +=1 
         userRecord['learnedMath'] = 0
         #print(userRecord['learnedMath'])
        
@@ -501,8 +530,8 @@ def correctSum(theSum):
         programState = 2
 
     if(framesCorrect >= signCorrect):
-        mathQsSeen += 1  
-        mathQsCorrect += 1 
+        currSessionPresented += 1
+        currentSessionCorrect += 1
         if('attemptedEquation' in userRecord):
            userRecord['attemptedEquation'] = userRecord['attemptedEquation'] + 1
         else:
@@ -546,6 +575,8 @@ def displayASL():
     global isLearningMath
     global Result
     global theSum
+    global passOrFail
+
     pygame.font.init()
     font = pygame.font.SysFont("Comic Sans MS", 32)
 
@@ -663,6 +694,7 @@ def displayASL():
 
 #######################################################################################   
 def correctGesture(aslNum):
+    global userRecord
     global programState
     global framesCorrect
     global sucess
@@ -678,6 +710,7 @@ def correctGesture(aslNum):
     global framesUntilCorrect
     global currentSessionCorrect
     global currSessionPresented
+    global isLearningMath
 
 
     predictedClass = clf.Predict(testData)
@@ -695,6 +728,7 @@ def correctGesture(aslNum):
 
     if(framesGoneBy >= framesToGuess):
         currSessionPresented +=1
+        userRecord['signingCorrContinously'] = 0
         pickle.dump(database, open('userData/database.p','wb'))
         framesUntilCorrect = 10
         framesGoneBy = 0
@@ -728,6 +762,21 @@ def correctGesture(aslNum):
             else:
                 userRecord[key] = 1
             whichDigit = 0
+
+        #will serve as a way to switch from signing asl digits to math 
+        if('signingCorrContinously' in userRecord):
+            if(userRecord.get('signingCorrContinously') == 5):
+                #boolean to signal switch to asl
+                isLearningMath = True
+                #need to reset it
+                userRecord['signingCorrContinously'] = 0
+                print(userRecord.get('signingCorrContinously'))
+            else:
+                userRecord['signingCorrContinously'] = userRecord['signingCorrContinously'] + 1
+                isLearningMath = False
+            #the
+        else:
+            userRecord['signingCorrContinously'] = 1 
 
         framesGoneBy = 0
         programState = 3
@@ -889,9 +938,6 @@ def draw_userProgress(currentSessionCorrect, currSessionPresented):
     
 ####################################################################################### 
 def draw_prevProgress(userRecord):
-    #arc(surface, color, rect, start_angle, stop_angle, width=1) 
-    #calculate previous user progress
-
     pygame.font.init()
     font = pygame.font.SysFont("Comic Sans MS", 24)
 
@@ -1103,8 +1149,6 @@ def main():
             if event.type == pygame.QUIT:
                 userRecord['prevSessionPresented'] = currSessionPresented
                 userRecord['prevSessionCorrect'] = currentSessionCorrect
-                userRecord['prevSessionMathQsSeen'] = mathQsSeen
-                userRecord['prevSessionSignedMathCorrect'] = mathQsCorrect
                 pickle.dump(database, open('userData/database.p','wb'))
                 pygame.quit()
                 sys.exit()
