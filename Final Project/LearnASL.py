@@ -36,7 +36,6 @@ framesCorrect = 0
 sucess = False
 digitPresented = " "
 framesGoneBy = 0
-
 whichDigit = 0
 framesToGuess = 35
 signCorrect = 10
@@ -93,6 +92,7 @@ def login():
 #     global userRecord
 #     global userName
 #     global pygameWindow
+#     global txt_surface
 #     screen = pygame.display.set_mode((800, 800))
 #     font = pygame.font.Font(None, 32)
 #     input_box = pygame.Rect(250, 400, 140, 32)
@@ -103,7 +103,6 @@ def login():
 #     database = pickle.load(open('/Users/chief/Desktop/LeapDeveloperKit_2.3.1+31549_mac/LeapSDK/lib/CS228/Final Project/userData/database.p','rb'))
 #     userName = ' '
 #     done = False
-
 
 #     while not done:
 #         for event in pygame.event.get():
@@ -120,8 +119,7 @@ def login():
             
 #                 if active:
 #                     if event.key == pygame.K_RETURN:
-#                         #get rid of /r
-#                         userName = userName[0:-1]
+                
 #                         done = True
 #                         #launch the pygame window
 #                         pygameWindow = PYGAME_WINDOW()
@@ -146,6 +144,7 @@ def login():
 
 #         # Render the current text.
 #         txt_surface = font.render(userName, True, color)
+#         userName = txt_surface.text()
 #         # Resize the box if the text is too long.
 #         width = max(200, txt_surface.get_width()+10)
 #         input_box.w = width
@@ -256,12 +255,13 @@ def HandleState2(frame, handlist):
     global isLearningSubtraction
     global passOrFail
     global userRecord
+    global userState
 
+    checkState(userRecord)
     #determines if user is passing or failing
     #if they are failing they will go back to 
     #learning how to sign digits from displayASL
     changeBackToASL(userRecord)
-
 
     if(not HandOverDevice(frame, handlist)):
         programState = 0
@@ -293,7 +293,24 @@ def HandOverDevice(frame, handlist):
         isHandOverDevice = False
     return isHandOverDevice
 
-#################################################################################### 
+####################################################################################
+def checkState(userRecord):
+    global userState
+    global isLearningMath
+    global lastDigitSigned
+    global numToGesture
+    global whichDigit
+    global aslNum
+
+    if('lastState' not in userRecord):
+        isLearningMath = False
+
+    if(userRecord.get('lastState') == 'LearningASL'):
+        isLearningMath = False 
+    if(userRecord.get('lastState') == 'LearningMath'):
+        isLearningMath = True
+####################################################################################       
+
 #will change back to ASL if the user falls below "failing" score
 def changeBackToASL(userRecord):
     global isLearningMath
@@ -302,8 +319,9 @@ def changeBackToASL(userRecord):
 
     #need to check to see if both are in userRecord
     if('attemptedEquation' and 'signedCorrectEquation' in userRecord):
-        signedCorrectEquation = userRecord.get('signedCorrectEquation')
         attemptedEquation = userRecord.get('attemptedEquation')
+        signedCorrectEquation = userRecord.get('signedCorrectEquation')
+        
     else:
         attemptedEquation = 0.0
         signedCorrectEquation = 0.0
@@ -312,21 +330,20 @@ def changeBackToASL(userRecord):
     questionsCorr = float(signedCorrectEquation)
    
     #if more than 10 math equations have been presented 
-    if(questionsPres >= 10):
+    if(questionsPres >= 10.0):
         #get the grade
         passOrFail = float(questionsCorr/questionsPres)
         #if the percentage is <= 60 switch to asl
         if(passOrFail <= 0.60):
             isLearningMath = False
             isAbleToSign = False
-
             #should reset so that you can alternate between states
             userRecord['attemptedEquation'] = 0
             userRecord['signedCorrectEquation'] = 0
-        
-        
+            userState = 'LearningASL'
+            userRecord['lastState'] = userState
 
-    
+    #checkState should take care of this...we'll see
     if(isLearningMath == False):
         displayASL() 
     if(isLearningMath == True):
@@ -335,9 +352,6 @@ def changeBackToASL(userRecord):
             teachAddition()
         elif(isLearningSubtraction == True):
             teachSubtraction()
-
-        
-
 #################################################################################### 
 def teachMath():
     global isLearningAddition
@@ -351,13 +365,10 @@ def teachMath():
         isLearningAddition = True
     if(chooseMathFunc == 1):
         isLearningSubtraction = True
-        
-        
 ####################################################################################
 #This function will allow users to sign the result of some equation (either addition or subtraction)
 def teachAddition():
     global isAbleToSign
-    global Result
     global isLearningMath
     global theSum
     global resultDigit
@@ -366,6 +377,7 @@ def teachAddition():
     global isLearningAddition
     global currentSessionCorrect
     global currSessionPresented
+    global lastDigitSigned
 
     pygame.font.init()
     font = pygame.font.SysFont("Comic Sans MS", 56)
@@ -573,17 +585,20 @@ def displayASL():
     global database
     global framesCorrect
     global isLearningMath
-    global Result
     global theSum
     global passOrFail
+    global userState
+    global lastDigitSigned
+    global numToGesture
 
     pygame.font.init()
     font = pygame.font.SysFont("Comic Sans MS", 32)
 
     aslNum = range(0,10)
     #choose asl to gesture
+
     numToGesture = aslNum[whichDigit]
-  
+    
     if sucess == False:
         if(numToGesture == aslNum[0]):
             if('digit0presented' in userRecord):
@@ -656,6 +671,8 @@ def displayASL():
             aslDigit = font.render("Times Presented: " + str(userRecord['digit9presented']), True, (0, 0, 0))
             num = '9'
 
+    userState = 'LearningASL'
+
     currSessionPresented = float(currSessionPresented)
     currentSessionCorrect  = float(currentSessionCorrect)
 
@@ -711,6 +728,8 @@ def correctGesture(aslNum):
     global currentSessionCorrect
     global currSessionPresented
     global isLearningMath
+    global userState
+    global numToGesture
 
 
     predictedClass = clf.Predict(testData)
@@ -729,6 +748,7 @@ def correctGesture(aslNum):
     if(framesGoneBy >= framesToGuess):
         currSessionPresented +=1
         userRecord['signingCorrContinously'] = 0
+       
         pickle.dump(database, open('userData/database.p','wb'))
         framesUntilCorrect = 10
         framesGoneBy = 0
@@ -743,7 +763,7 @@ def correctGesture(aslNum):
         #only if digit is less than or equal to 9
         convert = str(whichDigit)
         key = (convert + " Sucessful signs")   
-        
+
         if(whichDigit < 9):
             #create a dictionary for sucessful sign 
             if(key in userRecord):   
@@ -753,6 +773,7 @@ def correctGesture(aslNum):
             else:
                 userRecord[key] = 1
             whichDigit+=1
+    
         #otherwise bring it back to 0
         elif(whichDigit == 9):
             if(key in userRecord):   
@@ -768,6 +789,8 @@ def correctGesture(aslNum):
             if(userRecord.get('signingCorrContinously') == 5):
                 #boolean to signal switch to asl
                 isLearningMath = True
+                userState = "LearningMath"
+                userRecord['lastState'] = userState
                 #need to reset it
                 userRecord['signingCorrContinously'] = 0
                 print(userRecord.get('signingCorrContinously'))
@@ -796,9 +819,7 @@ def drawGestureStatus(framesCorrect):
 
     cold = pygame.image.load("/Users/chief/Desktop/LeapDeveloperKit_2.3.1+31549_mac/LeapSDK/lib/CS228/Del10/ASLNUMS/cold.png")
     warm = pygame.image.load("/Users/chief/Desktop/LeapDeveloperKit_2.3.1+31549_mac/LeapSDK/lib/CS228/Del10/ASLNUMS/warm.png")
-    hot = pygame.image.load("/Users/chief/Desktop/LeapDeveloperKit_2.3.1+31549_mac/LeapSDK/lib/CS228/Del10/ASLNUMS/10Success.png")
-    
-
+   
     if(framesCorrect == 0):
         #display thumbs down 
         cold = pygameWindow.screen.blit(cold, (275, 515))  
@@ -808,7 +829,7 @@ def drawGestureStatus(framesCorrect):
         pygame.draw.arc(pygameWindow.screen, color, [212.5, 625, 250, 250], pi, 3*pi/2, 5)    
         pygame.draw.arc(pygameWindow.screen, color, [212.5, 625, 250, 250], 3*pi/2, 2*pi, 5)  
     
-    elif(framesCorrect > 0 and framesCorrect <= 9):
+    elif(framesCorrect > 0 and framesCorrect <= 10):
         #display thumbs up
         warm = pygameWindow.screen.blit(warm, (275, 515)) 
         color = (0, 255, 0)
@@ -816,15 +837,6 @@ def drawGestureStatus(framesCorrect):
         pygame.draw.arc(pygameWindow.screen, color, [212.5, 625, 250, 250], pi/2, pi, 5)    
         pygame.draw.arc(pygameWindow.screen, color, [212.5, 625, 250, 250], pi, 3*pi/2, 5)    
         pygame.draw.arc(pygameWindow.screen, color, [212.5, 625, 250, 250], 3*pi/2, 2*pi, 5)  
-    
-    elif(framesCorrect == 10):
-        #display gold thumbs up
-        hot = pygameWindow.screen.blit(hot, (275, 515)) 
-        color = (255, 215, 0)
-        pygame.draw.arc(pygameWindow.screen, color, [212.5, 625, 250, 250], 0, pi/2, 5)  
-        pygame.draw.arc(pygameWindow.screen, color, [212.5, 625, 250, 250], pi/2, pi, 5)    
-        pygame.draw.arc(pygameWindow.screen, color, [212.5, 625, 250, 250], pi, 3*pi/2, 5)    
-        pygame.draw.arc(pygameWindow.screen, color, [212.5, 625, 250, 250], 3*pi/2, 2*pi, 5)   
 
 
 ####################################################################################### 
@@ -1143,12 +1155,16 @@ def main():
     global numFrames
     global correctSign
     global k
+    global whichDigit
+    global userState
     while True:
 
         for event in pygame.event.get():
             if event.type == pygame.QUIT:
                 userRecord['prevSessionPresented'] = currSessionPresented
                 userRecord['prevSessionCorrect'] = currentSessionCorrect
+                userState = userRecord.get('lastState')
+                userRecord['lastState'] = userState
                 pickle.dump(database, open('userData/database.p','wb'))
                 pygame.quit()
                 sys.exit()
