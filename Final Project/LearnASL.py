@@ -36,7 +36,7 @@ framesCorrect = 0
 sucess = False
 digitPresented = " "
 framesGoneBy = 0
-whichDigit = 0
+#whichDigit = 0
 framesToGuess = 35
 signCorrect = 10
 scaffoldingTwo = 2 
@@ -53,6 +53,7 @@ isLearningMath = False
 isLearningAddition = False 
 isLearningSubtraction = False
 failing = False
+aslNum = range(0,10)
 
 
 ####################################################################################
@@ -301,12 +302,21 @@ def checkState(userRecord):
     global numToGesture
     global whichDigit
     global aslNum
+    global num
 
-    if('lastState' not in userRecord):
+    if('lastState' and 'lastDigitSigned' not in userRecord):
         isLearningMath = False
+        whichDigit = 0
+        num = '0'
+        numToGesture = aslNum[whichDigit]
 
     if(userRecord.get('lastState') == 'LearningASL'):
         isLearningMath = False 
+        whichDigit = userRecord.get('lastDigitSigned')
+        num = str(whichDigit)
+        numToGesture = aslNum[whichDigit]
+        print(numToGesture)
+
     if(userRecord.get('lastState') == 'LearningMath'):
         isLearningMath = True
 ####################################################################################       
@@ -316,6 +326,10 @@ def changeBackToASL(userRecord):
     global isLearningMath
     global isAbleToSign
     global passOrFail
+    global num
+    global numToGesture
+    global aslNum
+    global whichDigit
 
     #need to check to see if both are in userRecord
     if('attemptedEquation' and 'signedCorrectEquation' in userRecord):
@@ -342,6 +356,9 @@ def changeBackToASL(userRecord):
             userRecord['signedCorrectEquation'] = 0
             userState = 'LearningASL'
             userRecord['lastState'] = userState
+            whichDigit = userRecord.get('lastDigitSigned')
+            num = str(whichDigit)
+            numToGesture = aslNum[whichDigit]
 
     #checkState should take care of this...we'll see
     if(isLearningMath == False):
@@ -406,9 +423,7 @@ def teachAddition():
             if(userRecord.get('learnedMath') >= 3):
                 resultString = "a =" + str(randNum) + "," + "b = a" +"+"+ str(randNum2) +","+ "b = ?"
             resultDigit = font.render((resultString), True, (0, 0, 0))
-            #display the equation to the screen
-        #display the text until correct
-            #pygame.time.wait(5000)
+           
             isLearningMath = True
             isAbleToSign = True
     pygameWindow.screen.blit(resultDigit, (635, 675))
@@ -437,7 +452,6 @@ def teachSubtraction():
     global currentSessionCorrect
     global currSessionPresented
 
-
     pygame.font.init()
     font = pygame.font.SysFont("Comic Sans MS", 56)
 
@@ -463,11 +477,8 @@ def teachSubtraction():
             if(userRecord.get('learnedMath') >= 5):
                 resultString = "a =" + str(randNum) + "," + "b = a" +"-"+ str(randNum2) +","+ "b = ?"
             resultDigit = font.render((resultString), True, (0, 0, 0))
-            #display the equation to the screen
-        #display the text until correct
-            #pygame.time.wait(5000)
+
             isLearningMath = True
-    
             isAbleToSign = True
     pygameWindow.screen.blit(resultDigit, (635, 675))
 
@@ -594,12 +605,12 @@ def displayASL():
     pygame.font.init()
     font = pygame.font.SysFont("Comic Sans MS", 32)
 
-    aslNum = range(0,10)
+   # aslNum = range(0,10)
     #choose asl to gesture
 
     numToGesture = aslNum[whichDigit]
     
-    if sucess == False:
+    if(sucess == False):
         if(numToGesture == aslNum[0]):
             if('digit0presented' in userRecord):
                 userRecord['digit0presented'] = userRecord['digit0presented'] + 1
@@ -672,6 +683,10 @@ def displayASL():
             num = '9'
 
     userState = 'LearningASL'
+    lastDigitSigned = whichDigit
+    #print(lastDigitSigned)
+    userRecord['lastDigitSigned'] = lastDigitSigned
+
 
     currSessionPresented = float(currSessionPresented)
     currentSessionCorrect  = float(currentSessionCorrect)
@@ -738,17 +753,18 @@ def correctGesture(aslNum):
         correctSign = True
         framesCorrect+=1
         framesGoneBy+=1
+        userRecord['lastDigitSigned'] = whichDigit
        
     if(predictedClass != aslNum[whichDigit]):
         correctSign = False
         framesGoneBy+= 1 
         framesCorrect = 0
         programState = 2
+        userRecord['lastDigitSigned'] = whichDigit
 
     if(framesGoneBy >= framesToGuess):
         currSessionPresented +=1
         userRecord['signingCorrContinously'] = 0
-       
         pickle.dump(database, open('userData/database.p','wb'))
         framesUntilCorrect = 10
         framesGoneBy = 0
@@ -773,6 +789,8 @@ def correctGesture(aslNum):
             else:
                 userRecord[key] = 1
             whichDigit+=1
+            lastDigitSigned = whichDigit
+            userRecord['lastDigitSigned'] = lastDigitSigned
     
         #otherwise bring it back to 0
         elif(whichDigit == 9):
@@ -783,6 +801,8 @@ def correctGesture(aslNum):
             else:
                 userRecord[key] = 1
             whichDigit = 0
+            lastDigitSigned = whichDigit
+            userRecord['lastDigitSigned'] = lastDigitSigned
 
         #will serve as a way to switch from signing asl digits to math 
         if('signingCorrContinously' in userRecord):
@@ -791,13 +811,14 @@ def correctGesture(aslNum):
                 isLearningMath = True
                 userState = "LearningMath"
                 userRecord['lastState'] = userState
+                userRecord['lastDigitSigned'] = whichDigit
                 #need to reset it
                 userRecord['signingCorrContinously'] = 0
                 print(userRecord.get('signingCorrContinously'))
             else:
                 userRecord['signingCorrContinously'] = userRecord['signingCorrContinously'] + 1
                 isLearningMath = False
-            #the
+         
         else:
             userRecord['signingCorrContinously'] = 1 
 
@@ -1053,7 +1074,6 @@ def Handle_Vector_From_Leap(v):
 
     #Scale the two values like you did previously
     return scaleX, scaleY
-    
 
 ####################################################################################
 def Handle_Bone(bone):
@@ -1084,7 +1104,6 @@ def Handle_Finger(finger):
     global bone 
     global testData
     global predictedClass
-
 
     for b in range(0, 4):
         bone = finger.bone(b)
