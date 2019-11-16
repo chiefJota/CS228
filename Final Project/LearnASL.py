@@ -605,9 +605,6 @@ def displayASL():
     pygame.font.init()
     font = pygame.font.SysFont("Comic Sans MS", 32)
 
-   # aslNum = range(0,10)
-    #choose asl to gesture
-
     numToGesture = aslNum[whichDigit]
     
     if(sucess == False):
@@ -684,9 +681,8 @@ def displayASL():
 
     userState = 'LearningASL'
     lastDigitSigned = whichDigit
-    #print(lastDigitSigned)
     userRecord['lastDigitSigned'] = lastDigitSigned
-
+    userRecord['lastState'] = userState
 
     currSessionPresented = float(currSessionPresented)
     currentSessionCorrect  = float(currentSessionCorrect)
@@ -754,6 +750,7 @@ def correctGesture(aslNum):
         framesCorrect+=1
         framesGoneBy+=1
         userRecord['lastDigitSigned'] = whichDigit
+        
        
     if(predictedClass != aslNum[whichDigit]):
         correctSign = False
