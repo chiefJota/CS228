@@ -200,7 +200,7 @@ def handLocation(base):
 #(you decide what that time span should be), provide a visual cue to the user that they have
 #succeeded.
 def isHandCentered(hand, framesCentered):
-    global programState
+    global programState, isCentered
     #middle finger
     theBird = hand.fingers[2]
     #base of middle finger
@@ -213,9 +213,13 @@ def isHandCentered(hand, framesCentered):
     #if the hand is centered
     if(isCentered == True):
         framesCentered+=1
+    #TODO: Draw green square outline to help user
+    
     #hand isnt centered    
     if(isCentered == False):
         framesCentered = 0
+    
+    drawCenteredVisual(isCentered)
 
     #the hand has been centered for 25 frames    
     if(framesCentered > 10):
@@ -827,6 +831,17 @@ def correctGesture(aslNum):
         pickle.dump(database, open('userData/database.p','wb'))
 
 ####################################################################################### 
+#draws green outline of rectangle to indicate to user that their hand is centered 
+#so it is less confusing
+def drawCenteredVisual(isCentered):
+    #green
+    if(isCentered == True):
+        color = (0, 255, 0)
+        pygame.draw.rect(pygameWindow.screen, color, (0, 0, constants.pygameWindowWidth/2, constants.pygameWindowDepth/2), 4)
+    else:
+        color = (255, 0, 0)
+        pygame.draw.rect(pygameWindow.screen, color, (0, 0, constants.pygameWindowWidth/2, constants.pygameWindowDepth/2), 4)
+    
 def drawGestureStatus(framesCorrect):
 
     color = (0, 0, 0)
