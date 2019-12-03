@@ -54,6 +54,7 @@ isLearningAddition = False
 isLearningSubtraction = False
 failing = False
 aslNum = range(0,10)
+position = (725, 675)
 
 
 ####################################################################################
@@ -85,77 +86,6 @@ def login():
     print(database)
 ####################################################################################
 ####################################################################################
-####################################################################################
-####################################################################################
-####################################################################################
-# def login2():
-#     global database
-#     global userRecord
-#     global userName
-#     global pygameWindow
-#     global txt_surface
-#     screen = pygame.display.set_mode((800, 800))
-#     font = pygame.font.Font(None, 32)
-#     input_box = pygame.Rect(250, 400, 140, 32)
-#     color_inactive = pygame.Color('lightskyblue3')
-#     color_active = pygame.Color('dodgerblue2')
-#     color = color_inactive
-#     active = False
-#     database = pickle.load(open('/Users/chief/Desktop/LeapDeveloperKit_2.3.1+31549_mac/LeapSDK/lib/CS228/Final Project/userData/database.p','rb'))
-#     userName = ' '
-#     done = False
-
-#     while not done:
-#         for event in pygame.event.get():
-#             if event.type == pygame.MOUSEBUTTONDOWN:
-#                 # If the user clicked on the input_box rect.
-#                 if input_box.collidepoint(event.pos):
-#                     # Toggle the active variable.
-#                     active = not active
-#                 else:
-#                     active = False
-#                 # Change the current color of the input box.
-#                 color = color_active if active else color_inactive
-#             if event.type == pygame.KEYDOWN:
-            
-#                 if active:
-#                     if event.key == pygame.K_RETURN:
-                
-#                         done = True
-#                         #launch the pygame window
-#                         pygameWindow = PYGAME_WINDOW()
-#                     if event.key == pygame.K_BACKSPACE:
-#                         userName = userName[0:-1]
-#                     else:
-#                         userName += event.unicode
-#                 #returning user
-#         if userName in database:
-#             #welcome back kid
-#             greeting = font.render("Welcome back " + userName + "!", True, (255, 0, 0))  
-#             #get number of logins associated with the user
-#             database[userName]['logins']+=1
-#         else:
-#             #set value for key
-#             database[userName] = {'logins' : 1}
-#             greeting = font.render("Welcome " + userName + "!", True, color)  
-#         userRecord = database[userName]
-        
-#         screen.fill((30, 30, 30))
-#         screen.blit(greeting, (500, 400))
-
-#         # Render the current text.
-#         txt_surface = font.render(userName, True, color)
-#         userName = txt_surface.text()
-#         # Resize the box if the text is too long.
-#         width = max(200, txt_surface.get_width()+10)
-#         input_box.w = width
-#         # Blit the text.
-#         screen.blit(txt_surface, (input_box.x+5, input_box.y+5))
-#         # Blit the input_box rect.
-#         pygame.draw.rect(screen, color, input_box, 2)
-
-#         pygame.display.flip()
-#     print(database)
 ####################################################################################
 login()
 pygameWindow = PYGAME_WINDOW()
@@ -399,6 +329,7 @@ def teachAddition():
     global currentSessionCorrect
     global currSessionPresented
     global lastDigitSigned
+    global position
 
     pygame.font.init()
     font = pygame.font.SysFont("Comic Sans MS", 56)
@@ -423,14 +354,15 @@ def teachAddition():
             # if(userRecord.get('learnedMath') in userRecord):
             #     if(userRecord.get('learnedMath') < 5):
                     #now they are able to attempt to sign the sum
-            resultString = "Result of:" + str(randNum)+"+"+str(randNum2)
+            resultString = str(randNum)+"+"+str(randNum2)
             if(userRecord.get('learnedMath') >= 3):
                 resultString = "a =" + str(randNum) + "," + "b = a" +"+"+ str(randNum2) +","+ "b = ?"
+                position = (630, 675)
             resultDigit = font.render((resultString), True, (0, 0, 0))
            
             isLearningMath = True
             isAbleToSign = True
-    pygameWindow.screen.blit(resultDigit, (635, 675))
+    pygameWindow.screen.blit(resultDigit, position)
 
     currSessionPresented = float(currSessionPresented)
     currentSessionCorrect  = float(currentSessionCorrect)
@@ -455,6 +387,7 @@ def teachSubtraction():
     global isLearningSubtraction
     global currentSessionCorrect
     global currSessionPresented
+    global position
 
     pygame.font.init()
     font = pygame.font.SysFont("Comic Sans MS", 56)
@@ -477,14 +410,15 @@ def teachSubtraction():
             #need to know whichDigit to sign
             theSum = resultToSign
                     #now they are able to attempt to sign the sum
-            resultString = "Difference of:" + str(randNum)+"-"+str(randNum2)
+            resultString = str(randNum)+"-"+str(randNum2)
             if(userRecord.get('learnedMath') >= 5):
                 resultString = "a =" + str(randNum) + "," + "b = a" +"-"+ str(randNum2) +","+ "b = ?"
+                position = (630, 675)
             resultDigit = font.render((resultString), True, (0, 0, 0))
 
             isLearningMath = True
             isAbleToSign = True
-    pygameWindow.screen.blit(resultDigit, (635, 675))
+    pygameWindow.screen.blit(resultDigit, position)
 
     currSessionPresented = float(currSessionPresented)
     currentSessionCorrect  = float(currentSessionCorrect)
@@ -898,7 +832,7 @@ def compareUsers(database):
     else:
         averageSuccess = float(totalCorrect/totalSeen)
         averageSuccessPercentage = round(float(averageSuccess * 100), 2)
-    averageProgress = font.render("Avg Sucess %: " + str(averageSuccessPercentage), True, (0, 0, 255))
+    averageProgress = font.render("Avg. Sucess %: " + str(averageSuccessPercentage), True, (0, 0, 255))
     pygameWindow.screen.blit(averageProgress, (5, 850))
 
     color = (0, 0, 0)
