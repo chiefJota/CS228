@@ -378,7 +378,6 @@ def teachAddition():
 #This function will allow users to sign the result of some equation (either addition or subtraction)
 def teachSubtraction():
     global isAbleToSign
-    global Result
     global isLearningMath
     global theSum
     global resultDigit
@@ -551,70 +550,70 @@ def displayASL():
                 userRecord['digit0presented'] = userRecord['digit0presented'] + 1
             else:
                 userRecord['digit0presented'] = 1
-            aslDigit = font.render("Times Presented: " + str(userRecord['digit0presented']), True, (0, 0, 0))
+            #aslDigit = font.render("Times Presented: " + str(userRecord['digit0presented']), True, (0, 0, 0))
             num = '0'
         if(numToGesture == aslNum[1]):
             if('digit1presented' in userRecord):
                 userRecord['digit1presented'] = userRecord['digit1presented'] + 1
             else:
                 userRecord['digit1presented'] = 1
-            aslDigit = font.render("Times Presented: " + str(userRecord['digit1presented']), True, (0, 0, 0))
+            #aslDigit = font.render("Times Presented: " + str(userRecord['digit1presented']), True, (0, 0, 0))
             num = '1'
         if(numToGesture == aslNum[2]):
             if('digit2presented' in userRecord):
                 userRecord['digit2presented'] = userRecord['digit2presented'] + 1
             else:
                 userRecord['digit2presented'] = 1
-            aslDigit = font.render("Times Presented: " + str(userRecord['digit2presented']), True, (0, 0, 0))
+            #aslDigit = font.render("Times Presented: " + str(userRecord['digit2presented']), True, (0, 0, 0))
             num = '2'
         if(numToGesture == aslNum[3]):
             if('digit3presented' in userRecord):
                 userRecord['digit3presented'] = userRecord['digit3presented'] + 1
             else:
                 userRecord['digit3presented'] = 1
-            aslDigit = font.render("Times Presented: " + str(userRecord['digit3presented']), True, (0, 0, 0))
+            #aslDigit = font.render("Times Presented: " + str(userRecord['digit3presented']), True, (0, 0, 0))
             num = '3'
         if(numToGesture == aslNum[4]):
             if('digit4presented' in userRecord):
                 userRecord['digit4presented'] = userRecord['digit4presented'] + 1
             else:
                 userRecord['digit4presented'] = 1
-            aslDigit = font.render("Times Presented: " + str(userRecord['digit4presented']), True, (0, 0, 0))
+            #aslDigit = font.render("Times Presented: " + str(userRecord['digit4presented']), True, (0, 0, 0))
             num = '4'
         if(numToGesture == aslNum[5]):
             if('digit5presented' in userRecord):
                 userRecord['digit5presented'] = userRecord['digit5presented'] + 1
             else:
                 userRecord['digit5presented'] = 1
-            aslDigit = font.render("Times Presented: " + str(userRecord['digit5presented']), True, (0, 0, 0))
+            #aslDigit = font.render("Times Presented: " + str(userRecord['digit5presented']), True, (0, 0, 0))
             num = '5'
         if(numToGesture == aslNum[6]):
             if('digit6presented' in userRecord):
                 userRecord['digit6presented'] = userRecord['digit6presented'] + 1
             else:
                 userRecord['digit6presented'] = 1
-            aslDigit = font.render("Times Presented: " + str(userRecord['digit6presented']), True, (0, 0, 0))
+            #aslDigit = font.render("Times Presented: " + str(userRecord['digit6presented']), True, (0, 0, 0))
             num = '6'
         if(numToGesture == aslNum[7]):
             if('digit7presented' in userRecord):
                 userRecord['digit7presented'] = userRecord['digit7presented'] + 1
             else:
                 userRecord['digit7presented'] = 1
-            aslDigit = font.render("Times Presented: " + str(userRecord['digit7presented']), True, (0, 0, 0))
+            #aslDigit = font.render("Times Presented: " + str(userRecord['digit7presented']), True, (0, 0, 0))
             num = '7'
         if(numToGesture == aslNum[8]):
             if('digit8presented' in userRecord):
                 userRecord['digit8presented'] = userRecord['digit8presented'] + 1
             else:
                 userRecord['digit8presented'] = 1
-            aslDigit = font.render("Times Presented: " + str(userRecord['digit8presented']), True, (0, 0, 0))
+            #aslDigit = font.render("Times Presented: " + str(userRecord['digit8presented']), True, (0, 0, 0))
             num = '8'
         if(numToGesture == aslNum[9]):
             if('digit9presented' in userRecord):
                 userRecord['digit9presented'] = userRecord['digit9presented'] + 1
             else:
                 userRecord['digit9presented'] = 1
-            aslDigit = font.render("Times Presented: " + str(userRecord['digit9presented']), True, (0, 0, 0))
+            #aslDigit = font.render("Times Presented: " + str(userRecord['digit9presented']), True, (0, 0, 0))
             num = '9'
 
     userState = 'LearningASL'
@@ -635,7 +634,7 @@ def displayASL():
     convert = str(whichDigit)
     key = (convert + " Sucessful signs") 
 
-    pygameWindow.screen.blit(aslDigit,(675,900))  
+    #pygameWindow.screen.blit(aslDigit,(675,900))  
     daNumba = pygame.image.load("/Users/chief/Desktop/LeapDeveloperKit_2.3.1+31549_mac/LeapSDK/lib/CS228/Del9/ASLNUMS/"+num+".png")
     aslSign = pygame.image.load("/Users/chief/Desktop/LeapDeveloperKit_2.3.1+31549_mac/LeapSDK/lib/CS228/Del9/ASLNUMS/asl"+num+".png")
     pygameWindow.screen.blit(daNumba, (750, 175))
@@ -646,8 +645,8 @@ def displayASL():
         
 
     if(key in userRecord):
-        timesCorrect = font.render("Times correct: " + str(userRecord[key]), True, (0, 0, 0))
-        pygameWindow.screen.blit(timesCorrect,(675, 950))
+        #timesCorrect = font.render("Times correct: " + str(userRecord[key]), True, (0, 0, 0))
+        #pygameWindow.screen.blit(timesCorrect,(675, 950))
         #the user has successfully signed the number 4 or more times
         #so hide the ASL gesture image
         if(userRecord.get(key) >= scaffoldingTwo):
