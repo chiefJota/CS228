@@ -1,20 +1,23 @@
 # Learn-ASL
-Contains all the deliverables for my human computer interaction (HCI) class
 
-To Use Application:
-    Requires: 
-             1. Numpy
-             2. Pygame 3
-             3. Leap Motion Controller
-             4. Python 2.7 (mac)
-             5. Python 2.7 or 3 (windows)
+<h2> To Use Application: </h2>
+<h3> Requires: </h3>
+  <ol>  
+           <li>  Numpy </li>
+           <li>  Pygame 3 </li>
+           <li> Leap Motion Controller </li>
+           <li> Python 2.7 (mac) </li>
+           <li> Python 2.7 or 3 (windows) </li>
+</ol>
 
-To Setup:
-    Download LeapDeveloperKit for associated OS (MacOS or Windows)
-    Within LeapDeveloperKit, navigate to /lib directory 
-    Then clone or download master in /lib
-    Navigate to CS228/FinalProject/
-    Run LearnASL.py
+
+
+<h3>To Setup: </h3>
+    <li> Download LeapDeveloperKit for associated OS (MacOS or Windows) </li>
+   <li> Within LeapDeveloperKit, navigate to /lib directory </li>
+   <li> Then clone or download master in /lib </li>
+    <li> Navigate to CS228/FinalProject/ </li>
+   <li> Run LearnASL.py </li>
     
     
     
