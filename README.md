@@ -3,11 +3,11 @@ Contains all the deliverables for my human computer interaction (HCI) class
 
 To Use Application:
     Requires: 
-              Numpy
-              Pygame 3
-              Leap Motion Controller
-              Python 2.7 (mac)
-              Python 2.7 or 3 (windows)
+             1. Numpy
+             2. Pygame 3
+             3. Leap Motion Controller
+             4. Python 2.7 (mac)
+             5. Python 2.7 or 3 (windows)
 
 To Setup:
     Download LeapDeveloperKit for associated OS (MacOS or Windows)
