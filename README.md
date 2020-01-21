@@ -13,11 +13,13 @@
 
 
 <h3>To Setup: </h3>
+<ol>
     <li> Download LeapDeveloperKit for associated OS (MacOS or Windows) </li>
    <li> Within LeapDeveloperKit, navigate to /lib directory </li>
    <li> Then clone or download master in /lib </li>
     <li> Navigate to CS228/FinalProject/ </li>
    <li> Run LearnASL.py </li>
+</ol>
     
     
     
